@@ -2,51 +2,49 @@ package client
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
-	"github.com/tendermint/tendermint/rpc/client/http"
+	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+
 	"me-test/config"
 )
 
 type CmClient struct {
-	Conn    *grpc.ClientConn
-	CliHTTP *http.HTTP
+	Conn *grpc.ClientConn
 
-	cdc      *codec.ProtoCodec
-	txConfig client.TxConfig
+	Cdc      *codec.ProtoCodec
+	TxConfig client.TxConfig
+
+	TmClient   tmservice.ServiceClient
+	BankClient bankpb.QueryClient
 }
 
-/*
-NewCmClient
-rpcURI 参数表示 Cosmos REST API 地址, rpcURI2 参数表示 Tendermint RPC 地址
-*/
-func NewCmClient(rpcURI, rpcURI2 string) (*CmClient, error) {
-
+func NewCmClient(grpcAddr string) (*CmClient, error) {
 	var (
 		c   = &CmClient{}
 		err error
 	)
-	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount(config.DefaultAccountPrefix, config.DefaultAccountPrefix+sdk.PrefixPublic)
-	cfg.Seal()
 
-	// 使用 insecure.NewCredentials() 创建一个新的凭证
-	creds := credentials.NewTLS(nil)
+	if grpcAddr == "" {
+		grpcAddr = config.GRPCAddr
+	}
 
-	if c.Conn, err = grpc.Dial(rpcURI2, grpc.WithTransportCredentials(creds)); err != nil {
+	// create grpc connection
+	if c.Conn, err = grpc.Dial(grpcAddr, grpc.WithInsecure()); err != nil {
 		return c, err
 	}
 
-	if c.CliHTTP, err = http.New(rpcURI); err != nil {
-		return c, err
-	}
+	c.TmClient = tmservice.NewServiceClient(c.Conn)
 
-	c.cdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
-	c.txConfig = tx.NewTxConfig(c.cdc, tx.DefaultSignModes)
+	c.Cdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
+	// Configure the default signature mode
+	c.TxConfig = tx.NewTxConfig(c.Cdc, tx.DefaultSignModes)
+
+	// create bank query client
+	c.BankClient = bankpb.NewQueryClient(c.Conn)
 
 	return c, nil
 }

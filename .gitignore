@@ -69,7 +69,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+documents/_build/
 
 # PyBuilder
 target/
@@ -157,3 +157,6 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+
+/documents/
