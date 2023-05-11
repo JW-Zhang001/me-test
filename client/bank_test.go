@@ -24,7 +24,7 @@ func TestCmClient_Balance(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"case1", args{ctx, "cosmos1gmpxkchcdgfq995zye5efwzfw86zfa4vt4ke8g"}, "umec", false},
+		{"case1", args{ctx, "cosmos1fap8hp3t3xt20qw4sczlyrk6n92uffj4r4kw77"}, "umec", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
