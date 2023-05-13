@@ -1,31 +1,25 @@
-package main
+package test_case
 
 import (
 	"context"
-	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"go.uber.org/zap"
+
 	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
-	"time"
 )
 
-func main() {
-
-	test2()
-}
-
-func test2() {
+func TransferTx() {
 	c, _ := client.NewCmClient("")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
+	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
 	defer cancel()
 
 	privKey := "f7ef778caa413f8fae5c881c1d1c1d8a3ee0365bbee52514b2fd55be252131a2"
-	fromAddr, _ := tools.GetAccAddr(privKey)
-	toAddr, _ := tools.GetAccAddr(tools.GenPriKey())
-	fmt.Println("0", fromAddr.String())
-	fmt.Println("1", toAddr.String())
+	fromAddr, _ := client.GetAccAddress(privKey)
+	toAddr, _ := client.GetAccAddress(client.GenAccPriKey())
+	zap.S().Info("0", fromAddr.String())
+	zap.S().Info("1", toAddr.String())
 
 	i, err := c.GetAccountI(ctx, fromAddr.String())
 
@@ -34,7 +28,7 @@ func test2() {
 	if msg.ValidateBasic() != nil {
 		return
 	}
-	pk, _ := tools.GetPrivKey(privKey)
+	pk, _ := client.ConvertsAccPrivKey(privKey)
 
 	tx, err := c.BuildTx(msg, pk, i.GetSequence(), i.GetAccountNumber())
 	if err != nil {
@@ -45,5 +39,9 @@ func test2() {
 	if err != nil {
 		return
 	}
-	_ = c.BroadcastTx(txBytes)
+	res, err := c.BroadcastTx(txBytes)
+	if err != nil {
+		return
+	}
+	zap.S().Info(res)
 }

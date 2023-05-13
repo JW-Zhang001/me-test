@@ -11,7 +11,7 @@ import (
 	cryptopb "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	typetx "github.com/cosmos/cosmos-sdk/types/tx"
+	typestx "github.com/cosmos/cosmos-sdk/types/tx"
 	txsign "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsign "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	txpb "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -31,6 +31,18 @@ type CmClient struct {
 	TmClient   tmservice.ServiceClient
 	BankClient bankpb.QueryClient
 	AuthClient authpb.QueryClient
+}
+
+func init() {
+	// register custom Denom
+	if err := sdk.RegisterDenom(sdk.MEDenom, sdk.OneDec()); err != nil {
+		fmt.Println("register denom error:", err)
+		return
+	}
+	if err := sdk.RegisterDenom(sdk.BaseMEDenom, sdk.NewDecWithPrec(1, sdk.MEExponent)); err != nil {
+		fmt.Println("register denom error:", err)
+		return
+	}
 }
 
 func NewCmClient(grpcAddr string) (*CmClient, error) {
@@ -110,20 +122,19 @@ func (c *CmClient) Encoder(tx authsign.Tx) ([]byte, error) {
 	return txBytes, nil
 }
 
-func (c *CmClient) BroadcastTx(txBytes []byte) error {
-	txClient := typetx.NewServiceClient(c.Conn)
+func (c *CmClient) BroadcastTx(txBytes []byte) (*typestx.BroadcastTxResponse, error) {
+	txClient := typestx.NewServiceClient(c.Conn)
 
 	grpcRes, err := txClient.BroadcastTx(
 		context.Background(),
-		&typetx.BroadcastTxRequest{
-			Mode:    typetx.BroadcastMode_BROADCAST_MODE_SYNC,
+		&typestx.BroadcastTxRequest{
+			Mode:    typestx.BroadcastMode_BROADCAST_MODE_BLOCK,
 			TxBytes: txBytes, // Proto-binary of the signed transaction, see previous step.
 		},
 	)
 	if err != nil {
 		fmt.Println("BroadcastTx is err:", err)
-		return err
+		return nil, err
 	}
-	fmt.Println(grpcRes)
-	return nil
+	return grpcRes, nil
 }

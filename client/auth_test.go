@@ -34,3 +34,27 @@ func TestCmClient_GetAccountI(t *testing.T) {
 		})
 	}
 }
+
+func TestGetValAddress(t *testing.T) {
+	type args struct {
+		privKey string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"case1", args{"4JDrFuUwwIZSmlYF/2FCzXoXjLOBD+hTvqnAeT2iskHjeUVkVkU+Ve/dghiIettO0wOQ/Kl6CmAJeh4O0vd2NQ=="}, "", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetValAddress(tt.args.privKey)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetValAddress() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			fmt.Println(got.String())
+		})
+	}
+}
