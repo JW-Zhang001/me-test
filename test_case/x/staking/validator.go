@@ -3,7 +3,6 @@ package staking
 import (
 	"context"
 	"fmt"
-
 	"go.uber.org/zap"
 	"me-test/client"
 	"me-test/config"
@@ -30,7 +29,7 @@ func NewValidator() {
 	i, err := c.GetAccountI(ctx, fromAddr.String())
 
 	var tmPubKey tmcryptopb.PubKey
-	err = tmjson.Unmarshal([]byte("{\"type\": \"tendermint/PubKeyEd25519\",\"value\": \"X4u9vbLyjD6/OjNuJ2Api44qE/juaGLY7BlAX4e7A3U=\"}"), &tmPubKey)
+	err = tmjson.Unmarshal([]byte("{\"type\": \"tendermint/PubKeyEd25519\",\"value\": \"LvHZp4ALtrhPxn55Q9nIwZ69zLKeCBY2pmBB26WPHTM=\"}"), &tmPubKey)
 	if err != nil {
 		return
 	}
@@ -40,8 +39,8 @@ func NewValidator() {
 		fmt.Println("public key to app public key error: ", err)
 	}
 
-	amounstStr := "100mec"
-	amount, err := sdk.ParseCoinNormalized(amounstStr)
+	amountStr := "100mec"
+	amount, err := sdk.ParseCoinNormalized(amountStr)
 
 	description := stakepb.NewDescription("node5", "", "", "", "")
 

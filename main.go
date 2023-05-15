@@ -2,9 +2,9 @@ package main
 
 import (
 	_ "me-test/initialize"
-	"me-test/test_case"
+	"me-test/test_case/x/bank"
 )
 
 func main() {
-	test_case.TransferTx()
+	bank.TransferTx()
 }

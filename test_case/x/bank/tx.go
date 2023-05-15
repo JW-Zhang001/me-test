@@ -1,11 +1,10 @@
-package test_case
+package bank
 
 import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"go.uber.org/zap"
-
 	"me-test/client"
 	"me-test/config"
 )

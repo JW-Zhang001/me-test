@@ -2,11 +2,12 @@ package staking
 
 import (
 	"context"
+	"fmt"
+	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+
 	"me-test/client"
 	"me-test/config"
-
-	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 func NewKyc() {
@@ -24,8 +25,8 @@ func NewKyc() {
 
 	creator := fromAddr.String()
 	account := toAddr.String()
-	regionId := "1"
-	nftId := "go-test-nft-1"
+	regionId := "regionId-01"
+	nftId := "go-test-nft-2"
 
 	msg := stakepb.NewMsgNewKyc(creator, account, regionId, nftId)
 	if msg.ValidateBasic() != nil {
@@ -47,4 +48,5 @@ func NewKyc() {
 		return
 	}
 	zap.S().Info(res)
+	fmt.Println(res)
 }
