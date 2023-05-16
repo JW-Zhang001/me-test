@@ -2,13 +2,12 @@ package client
 
 import (
 	"context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
-
-	"me-test/config"
 )
 
 func (c *CmClient) Balance(ctx context.Context, addr string) (*bankpb.QueryBalanceResponse, error) {
-	req := &bankpb.QueryBalanceRequest{Address: addr, Denom: config.DefaultDenom}
+	req := &bankpb.QueryBalanceRequest{Address: addr, Denom: sdk.BaseMEDenom}
 
 	rpcRes, err := c.BankClient.Balance(ctx, req)
 	if err != nil {

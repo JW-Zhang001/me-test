@@ -46,5 +46,3 @@ func getLogWriter() zapcore.WriteSyncer {
 	}
 	return zapcore.AddSync(lumberJackLogger)
 }
-
-var Logger = zap.S()

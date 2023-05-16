@@ -85,7 +85,7 @@ func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq uint64, ac
 	if err != nil {
 		return nil, err
 	}
-	fees := sdk.NewCoins(sdk.NewInt64Coin(config.DefaultDenom, 1))
+	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, 1))
 	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit))
 	txBuilder.SetFeeAmount(fees)
 
