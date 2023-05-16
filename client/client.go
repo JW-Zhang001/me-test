@@ -69,6 +69,7 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 	c.txConfig = txpb.NewTxConfig(c.cdc, txpb.DefaultSignModes)
 
 	// create bank query client
+	c.TmClient = tmservice.NewServiceClient(c.Conn)
 	c.BankClient = bankpb.NewQueryClient(c.Conn)
 	c.AuthClient = authpb.NewQueryClient(c.Conn)
 	c.StakeClient = stakepb.NewQueryClient(c.Conn)

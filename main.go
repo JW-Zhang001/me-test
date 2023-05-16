@@ -1,9 +1,12 @@
 package main
 
-import (
-	_ "me-test/initialize"
-)
+import "me-test/testcase"
 
 func main() {
-	//bank.TransferTx()
+	//res := validator.GetTmPubKey()
+	//fmt.Println(res)
+	//res, _ := initialize.GetValidatorPubKey("node3")
+	//fmt.Println(res)
+	//data.Test1()
+	testcase.NewValidatorRegion()
 }

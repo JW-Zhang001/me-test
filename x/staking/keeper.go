@@ -7,11 +7,17 @@ import (
 )
 
 type Keeper struct {
-	cil *client.CmClient
-	ctx context.Context
+	Cil *client.CmClient
+	Ctx context.Context
 }
 
-var Ctx, cancel = context.WithTimeout(context.Background(), config.Timeout)
+func NewKeeper() (*Keeper, context.CancelFunc) {
+	var Ctx, cancel = context.WithTimeout(context.Background(), config.Timeout)
 
-// defer cancel()
-var C, _ = client.NewCmClient("")
+	// defer cancel()
+	var C, err = client.NewCmClient("")
+	if err != nil {
+		return nil, cancel
+	}
+	return &Keeper{Cil: C, Ctx: Ctx}, cancel
+}

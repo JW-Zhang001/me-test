@@ -6,6 +6,6 @@ import (
 )
 
 type Keeper struct {
-	cil *client.CmClient
-	ctx context.Context
+	Cil *client.CmClient
+	Ctx context.Context
 }
