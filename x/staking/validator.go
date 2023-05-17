@@ -70,3 +70,21 @@ func (k *Keeper) NewValidator(privKey, tmPubKeyStr, coinStr, moniker string) (*t
 	zap.S().Info("NewValidator res: ", res)
 	return res, nil
 }
+
+func (k *Keeper) GetValidatorID(res *txpb.BroadcastTxResponse) (validatorID string, err error) {
+	events := res.TxResponse.Logs[0].Events
+	for _, v := range events {
+		if v.Type == "create_validator" {
+			for _, vv := range v.Attributes {
+				if vv.Key == "validator" {
+					zap.S().Info("vv.Value: ", vv.Value)
+					validatorID = vv.Value
+				}
+			}
+		}
+	}
+	if validatorID == "" {
+		return "", fmt.Errorf("validatorID is empty")
+	}
+	return validatorID, nil
+}

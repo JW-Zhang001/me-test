@@ -1,6 +1,9 @@
 package main
 
-import "me-test/testcase"
+import (
+	"fmt"
+	"me-test/testcase"
+)
 
 func main() {
 	//res := validator.GetTmPubKey()
@@ -8,5 +11,7 @@ func main() {
 	//res, _ := initialize.GetValidatorPubKey("node3")
 	//fmt.Println(res)
 	//data.Test1()
-	testcase.NewValidatorRegion()
+	//testcase.NewValidatorRegion()
+	userPk, _ := testcase.NewKyc()
+	fmt.Println(userPk)
 }

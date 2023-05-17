@@ -12,10 +12,10 @@ import (
 	cryptopb "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	typestx "github.com/cosmos/cosmos-sdk/types/tx"
+	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	txsign "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsign "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	txpb "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authpb "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -66,7 +66,7 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 
 	c.cdc = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	// Configure the default signature mode
-	c.txConfig = txpb.NewTxConfig(c.cdc, txpb.DefaultSignModes)
+	c.txConfig = authtx.NewTxConfig(c.cdc, authtx.DefaultSignModes)
 
 	// create bank query client
 	c.TmClient = tmservice.NewServiceClient(c.Conn)
@@ -127,18 +127,29 @@ func (c *CmClient) Encoder(tx authsign.Tx) ([]byte, error) {
 	return txBytes, nil
 }
 
-func (c *CmClient) BroadcastTx(txBytes []byte) (*typestx.BroadcastTxResponse, error) {
-	txClient := typestx.NewServiceClient(c.Conn)
+func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error) {
+	txClient := txpb.NewServiceClient(c.Conn)
 
 	grpcRes, err := txClient.BroadcastTx(
 		context.Background(),
-		&typestx.BroadcastTxRequest{
-			Mode:    typestx.BroadcastMode_BROADCAST_MODE_BLOCK,
+		&txpb.BroadcastTxRequest{
+			Mode:    txpb.BroadcastMode_BROADCAST_MODE_BLOCK,
 			TxBytes: txBytes, // Proto-binary of the signed transaction, see previous step.
 		},
 	)
 	if err != nil {
 		fmt.Println("BroadcastTx is err:", err)
+		return nil, err
+	}
+	return grpcRes, nil
+}
+
+func (c *CmClient) GetTx(txHash string) (*txpb.GetTxResponse, error) {
+	txClient := txpb.NewServiceClient(c.Conn)
+	req := &txpb.GetTxRequest{Hash: txHash}
+	grpcRes, err := txClient.GetTx(context.Background(), req)
+	if err != nil {
+		fmt.Println("GetTx is err:", err)
 		return nil, err
 	}
 	return grpcRes, nil
