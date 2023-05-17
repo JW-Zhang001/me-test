@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	Client *ssh.Client
-	err    error
-	home   = "cd /home/meuser/me-test/deploy && "
+	client  *ssh.Client
+	session *ssh.Session
+	err     error
+	home    = "cd /home/meuser/me-test/deploy && "
 )
 
 func init() {
@@ -21,26 +22,28 @@ func init() {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	Client, err = ssh.Dial("tcp", "192.168.0.207:22", config)
+	client, err = ssh.Dial("tcp", "192.168.0.207:22", config)
 	if err != nil {
 		panic("Failed to dial: " + err.Error())
 	}
 }
 
 func executeCmd(cmd string) (string, error) {
-	// 执行命令
-	defer Client.Close()
-	session, err := Client.NewSession()
+	session, err := client.NewSession()
 	if err != nil {
 		panic("Failed to create session: " + err.Error())
 	}
-	defer session.Close()
 
 	output, err := session.Output(cmd)
 	if err != nil {
 		panic("Failed to execute command: " + err.Error())
 	}
 	return string(output), nil
+}
+
+func Close() {
+	defer client.Close()
+	defer session.Close()
 }
 
 func GetValidatorPubKey(nodeID string) (string, error) {

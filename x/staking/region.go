@@ -13,6 +13,8 @@ func (k *Keeper) NewRegion(privKey, regionId, name, validator string) (*txpb.Bro
 	fromAccAddr, _ := client.GetAccAddress(privKey)
 	fromAddr := fromAccAddr.String()
 	zap.S().Info("NewRegion/fromAccAddr: ", fromAddr)
+	zap.S().Info("NewRegion/regionId: ", regionId)
+	zap.S().Info("NewRegion/name: ", name)
 
 	msg := stakepb.NewMsgNewRegion(fromAddr, regionId, name, validator)
 	if msg.ValidateBasic() != nil {

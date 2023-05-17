@@ -1,4 +1,4 @@
-package tester
+package testcase
 
 import (
 	"context"
@@ -12,6 +12,7 @@ var (
 	ValidatorData ValidatorArgs
 	RegionData    RegionArgs
 	KycData       KycArgs
+	DelegateData  DelegateArgs
 
 	TestSuites []Testsuite
 
@@ -27,14 +28,15 @@ type Dependence struct {
 	Extract map[string]string
 }
 
-func init() {
-	StakeKeeper, Cancel = staking.NewKeeper()
-	ValidatorData, _ = NewValidatorArgs()
-	RegionData, _ = NewRegionArgs()
-	KycData, _ = NewKycArgs()
-
-	TestSuites = []Testsuite{
-		{Step: 1, Data: ValidatorData},
-		{Step: 2, Data: RegionData},
-	}
-}
+//func init() {
+//	StakeKeeper, Cancel = staking.NewKeeper()
+//	ValidatorData, _ = NewValidatorArgs()
+//	RegionData, _ = NewRegionArgs()
+//	KycData, _ = NewKycArgs()
+//	DelegateData, _ = NewDelegateArgs(1000000)
+//
+//	TestSuites = []Testsuite{
+//		{Step: 1, Data: ValidatorData},
+//		{Step: 2, Data: RegionData},
+//	}
+//}

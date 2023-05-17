@@ -1,81 +1,56 @@
 package testcase
 
 import (
+	"fmt"
 	"go.uber.org/zap"
-	"me-test/client"
-	"me-test/tester"
+	"me-test/config"
+	"me-test/initialize"
 )
 
-func NewValidatorRegion() (string, error) {
-	for _, v := range tester.TestSuites {
-		if v.Step == 1 {
-			valData := v.Data.(tester.ValidatorArgs)
-
-			privKey := valData.PrivKey
-			tmPubKeyStr := valData.TmPubKeyStr
-			coinStr := valData.CoinStr
-			moniker := valData.Moniker
-
-			res, err := tester.StakeKeeper.NewValidator(privKey, tmPubKeyStr, coinStr, moniker)
-			if err != nil {
-				zap.S().Errorf("NewValidator error %v", err)
-				return "", err
-			}
-			if res.TxResponse.Code != 0 {
-				zap.S().Errorf("NewValidator TxResponse error %v", res.TxResponse.RawLog)
-				return "", err
-			}
-			validatorID, err := tester.StakeKeeper.GetValidatorID(res)
-			if err != nil {
-				zap.S().Errorf("GetValidatorID error %v", err)
-				return "", err
-			}
-			zap.S().Info("NewValidator/validatorID: ", validatorID)
-			valData.Extract["validatorID"] = validatorID
-		} else if v.Step == 2 {
-			regionData := v.Data.(tester.RegionArgs)
-
-			privKey := regionData.PrivKey
-			regionId := regionData.RegionId
-			name := regionData.Name
-			validator := regionData.Extract["validatorID"]
-
-			res, err := tester.StakeKeeper.NewRegion(privKey, regionId, name, validator)
-			if err != nil {
-				zap.S().Errorf("NewRegion error %v", err)
-				return "", err
-			}
-			if res.TxResponse.Code != 0 {
-				zap.S().Errorf("NewValidator TxResponse error %v", res.TxResponse.RawLog)
-				return "", err
-			}
-			return regionId, nil
-		}
-
-	}
-	return "", nil
+type ValidatorArgs struct {
+	PrivKey     string
+	TmPubKeyStr string
+	CoinStr     string
+	Moniker     string
+	*Dependence
 }
 
-func NewKyc() (string, error) {
-	regionID, err := NewValidatorRegion()
+func NewValidatorArgs() (ValidatorArgs, error) {
+	nodeID := "node9"
+	tmPubK, err := initialize.GetValidatorPubKey(nodeID)
+	if err != nil {
+		return ValidatorArgs{}, fmt.Errorf("GetValidatorPubKey error %v", err)
+	}
+
+	return ValidatorArgs{config.SuperAdminPrivKey, tmPubK, "100mec", nodeID,
+		&Dependence{extract}}, nil
+}
+
+func TestNewValidator() (validatorID string, err error) {
+	testdata, err := NewValidatorArgs()
 	if err != nil {
 		return "", err
 	}
 
-	privKey := tester.KycData.PrivKey
-	userPrivKey := tester.KycData.ToAddr
-	userAccAddr, err := client.GetAccAddress(userPrivKey)
+	privKey := testdata.PrivKey
+	tmPubKeyStr := testdata.TmPubKeyStr
+	coinStr := testdata.CoinStr
+	moniker := testdata.Moniker
+
+	res, err := StakeKeeper.NewValidator(privKey, tmPubKeyStr, coinStr, moniker)
 	if err != nil {
-		return "", err
-	}
-	res, err := tester.StakeKeeper.NewKyc(privKey, userAccAddr.String(), regionID)
-	if err != nil {
-		zap.S().Errorf("NewRegion error %v", err)
+		zap.S().Errorf("NewValidator error %v", err)
 		return "", err
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("NewValidator TxResponse error %v", res.TxResponse.RawLog)
 		return "", err
 	}
-	return userPrivKey, nil
+	validatorID, err = StakeKeeper.GetValidatorID(res)
+	if err != nil {
+		zap.S().Errorf("GetValidatorID error %v", err)
+		return "", err
+	}
+	zap.S().Info("NewValidator/validatorID: ", validatorID)
+	return validatorID, nil
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"me-test/testcase"
+	"me-test/testsuite"
 )
 
 func main() {
@@ -11,7 +11,12 @@ func main() {
 	//res, _ := initialize.GetValidatorPubKey("node3")
 	//fmt.Println(res)
 	//data.Test1()
-	//testcase.NewValidatorRegion()
-	userPk, _ := testcase.NewKyc()
-	fmt.Println(userPk)
+	//res, _ := testsuite.NewValidatorRegion()
+	//fmt.Println(res)
+
+	ok := testsuite.TestKycDelegate()
+	if ok {
+		fmt.Println("pass")
+	}
+
 }
