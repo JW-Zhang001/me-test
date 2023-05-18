@@ -1,4 +1,4 @@
-package client
+package query
 
 import (
 	"context"
@@ -7,10 +7,7 @@ import (
 	"testing"
 )
 
-var (
-	ctx  = context.Background()
-	c, _ = NewCmClient("")
-)
+var BankQuery, Cancel = NewBankQuery()
 
 func TestCmClient_Balance(t *testing.T) {
 
@@ -24,11 +21,11 @@ func TestCmClient_Balance(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"case1", args{ctx, "cosmos1fap8hp3t3xt20qw4sczlyrk6n92uffj4r4kw77"}, "umec", false},
+		{"case1", args{BankQuery.Ctx, "cosmos1fap8hp3t3xt20qw4sczlyrk6n92uffj4r4kw77"}, "umec", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := c.Balance(tt.args.ctx, tt.args.addr)
+			got, err := BankQuery.Balance(tt.args.ctx, tt.args.addr)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Balance() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -55,12 +52,12 @@ func TestCmClient_AllBalances(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"case1", args{ctx, "cosmos1gmpxkchcdgfq995zye5efwzfw86zfa4vt4ke8g"}, "umec", false},
+		{"case1", args{BankQuery.Ctx, "cosmos1gmpxkchcdgfq995zye5efwzfw86zfa4vt4ke8g"}, "umec", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := c.AllBalances(tt.args.ctx, tt.args.addr)
+			got, err := BankQuery.AllBalances(tt.args.ctx, tt.args.addr)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AllBalances() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -90,11 +87,11 @@ func TestCmClient_TotalSupply(t *testing.T) {
 		want    *big.Int
 		wantErr bool
 	}{
-		{name: "case1", args: args{ctx}, want: stakeCoin, wantErr: false},
+		{name: "case1", args: args{BankQuery.Ctx}, want: stakeCoin, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := c.TotalSupply(tt.args.ctx)
+			got, err := BankQuery.TotalSupply(tt.args.ctx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TotalSupply() error = %v, wantErr %v", err, tt.wantErr)
 				return

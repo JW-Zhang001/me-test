@@ -11,14 +11,16 @@ import (
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"go.uber.org/zap"
 
-	"me-test/client"
+	"me-test/tools"
 )
 
 func (k *Keeper) NewValidator(privKey, tmPubKeyStr, coinStr, moniker string) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, _ := client.GetAccAddress(privKey)
+	fromAccAddr, _ := tools.GetAccAddress(privKey)
 	valAddr := sdk.ValAddress(fromAccAddr)
 	zap.S().Info("NewValidator/fromAccAddr: ", fromAccAddr.String())
 	zap.S().Info("NewValidator/valAddr: ", valAddr.String())
+	zap.S().Info("NewValidator/coinStr: ", coinStr)
+	zap.S().Info("NewValidator/moniker: ", moniker)
 
 	var tmPubKey tmcrypto.PubKey
 	err := tmjson.Unmarshal([]byte(tmPubKeyStr), &tmPubKey)
@@ -50,24 +52,11 @@ func (k *Keeper) NewValidator(privKey, tmPubKeyStr, coinStr, moniker string) (*t
 	if msg.ValidateBasic() != nil {
 		return nil, err
 	}
-	i, err := k.Cil.GetAccountI(k.Ctx, fromAccAddr.String())
+
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg)
 	if err != nil {
 		return nil, err
 	}
-	pk, _ := client.ConvertsAccPrivKey(privKey)
-	tx, err := k.Cil.BuildTx(msg, pk, i.GetSequence(), i.GetAccountNumber())
-	if err != nil {
-		return nil, err
-	}
-	txBytes, err := k.Cil.Encoder(tx)
-	if err != nil {
-		return nil, err
-	}
-	res, err := k.Cil.BroadcastTx(txBytes)
-	if err != nil {
-		return nil, err
-	}
-	zap.S().Info("NewValidator res: ", res)
 	return res, nil
 }
 

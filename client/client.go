@@ -3,6 +3,8 @@ package client
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
+	"me-test/tools"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -30,6 +32,7 @@ type CmClient struct {
 	cdc      *codec.ProtoCodec
 	txConfig client.TxConfig
 
+	TxClient    txpb.ServiceClient
 	TmClient    tmservice.ServiceClient
 	BankClient  bankpb.QueryClient
 	AuthClient  authpb.QueryClient
@@ -68,6 +71,9 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 	// Configure the default signature mode
 	c.txConfig = authtx.NewTxConfig(c.cdc, authtx.DefaultSignModes)
 
+	// create tx client
+	c.TxClient = txpb.NewServiceClient(c.Conn)
+
 	// create bank query client
 	c.TmClient = tmservice.NewServiceClient(c.Conn)
 	c.BankClient = bankpb.NewQueryClient(c.Conn)
@@ -75,6 +81,20 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 	c.StakeClient = stakepb.NewQueryClient(c.Conn)
 
 	return c, nil
+}
+
+func (c *CmClient) GetAccountI(ctx context.Context, address string) (acc authpb.AccountI, err error) {
+	req := &authpb.QueryAccountRequest{Address: address}
+	res, err := c.AuthClient.Account(ctx, req)
+	if err != nil {
+		return acc, err
+	}
+
+	if err = c.cdc.UnpackAny(res.GetAccount(), &acc); err != nil {
+		return acc, err
+	}
+
+	return acc, nil
 }
 
 func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq uint64, accNum uint64) (authsign.Tx, error) {
@@ -128,9 +148,7 @@ func (c *CmClient) Encoder(tx authsign.Tx) ([]byte, error) {
 }
 
 func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error) {
-	txClient := txpb.NewServiceClient(c.Conn)
-
-	grpcRes, err := txClient.BroadcastTx(
+	grpcRes, err := c.TxClient.BroadcastTx(
 		context.Background(),
 		&txpb.BroadcastTxRequest{
 			Mode:    txpb.BroadcastMode_BROADCAST_MODE_BLOCK,
@@ -145,12 +163,37 @@ func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error
 }
 
 func (c *CmClient) GetTx(txHash string) (*txpb.GetTxResponse, error) {
-	txClient := txpb.NewServiceClient(c.Conn)
 	req := &txpb.GetTxRequest{Hash: txHash}
-	grpcRes, err := txClient.GetTx(context.Background(), req)
+	grpcRes, err := c.TxClient.GetTx(context.Background(), req)
 	if err != nil {
 		fmt.Println("GetTx is err:", err)
 		return nil, err
 	}
 	return grpcRes, nil
+}
+
+func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg sdk.Msg) (*txpb.BroadcastTxResponse, error) {
+	fromAccAddr, err := tools.GetAccAddress(fromPrivKey)
+	if err != nil {
+		return nil, err
+	}
+	i, err := c.GetAccountI(ctx, fromAccAddr.String())
+	if err != nil {
+		return nil, err
+	}
+	pk256k1, _ := tools.ConvertsAccPrivKey(fromPrivKey)
+	signTx, err := c.BuildTx(msg, pk256k1, i.GetSequence(), i.GetAccountNumber())
+	if err != nil {
+		return nil, err
+	}
+	txBytes, err := c.Encoder(signTx)
+	if err != nil {
+		return nil, err
+	}
+	txRes, err := c.BroadcastTx(txBytes)
+	if err != nil {
+		return nil, err
+	}
+	zap.S().Info("SendBroadcastTx Response: ", txRes)
+	return txRes, nil
 }

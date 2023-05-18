@@ -14,18 +14,18 @@ type DelegateArgs struct {
 func NewDelegateArgs(amount int64) (DelegateArgs, error) {
 	amt := sdk.NewInt64Coin(sdk.DefaultBondDenom, amount)
 
-	return DelegateArgs{"", amt, &Dependence{extract}}, nil
+	return DelegateArgs{"${PrivKey}", amt, &Dependence{extract}}, nil
 }
 
-func TestNewDelegate(privKey string) (string, error) {
-	testdata, err := NewDelegateArgs(1000000)
+func TestNewDelegate(privKey string, amount int64) (string, error) {
+	testdata, err := NewDelegateArgs(amount)
 	if err != nil {
 		return "", err
 	}
 
-	amount := testdata.Amount
+	amt := testdata.Amount
 
-	res, err := StakeKeeper.Delegate(privKey, amount)
+	res, err := StakeKeeper.Delegate(privKey, amt)
 	if err != nil {
 		zap.S().Errorf("Delegate error %v", err)
 		return "", err

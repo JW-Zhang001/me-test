@@ -26,7 +26,7 @@ func TestKeeper_NewRegion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			k := &Keeper{Cil: C, Ctx: Ctx}
+			k := &Keeper{Cli: C, Ctx: Ctx}
 			got, err := k.NewRegion(tt.args.privKey, tt.args.regionId, tt.args.name, tt.args.validator)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewRegion() error = %v, wantErr %v", err, tt.wantErr)

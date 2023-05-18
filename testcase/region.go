@@ -25,7 +25,7 @@ func NewRegionArgs() (RegionArgs, error) {
 	randomIndex := rand.Intn(len(regionKey))
 
 	return RegionArgs{config.SuperAdminPrivKey, RandRegionID(), regionKey[randomIndex],
-		"${validator}", &Dependence{extract}}, nil
+		"${Validator}", &Dependence{extract}}, nil
 }
 
 func TestNewRegion(validatorID string) (regionID string, err error) {

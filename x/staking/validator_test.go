@@ -26,7 +26,7 @@ func TestKeeper_NewValidator(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			k := &Keeper{Cil: C, Ctx: Ctx}
+			k := &Keeper{Cli: C, Ctx: Ctx}
 			got, err := k.NewValidator(tt.args.privKey, tt.args.tmPubKeyStr, tt.args.coinStr, tt.args.moniker)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewValidator() error = %v, wantErr %v", err, tt.wantErr)
