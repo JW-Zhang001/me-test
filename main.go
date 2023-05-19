@@ -3,35 +3,56 @@ package main
 import (
 	"fmt"
 	"me-test/testsuite"
-	"me-test/tools"
 )
 
 func main() {
-	nodeID := tools.RandNodeID()
-	fmt.Println(nodeID)
-	regionID, ok := testsuite.TestNewValidatorRegion(nodeID)
-	if !ok {
-		fmt.Println("TestNewValidatorRegion error")
-	}
-	fmt.Println("------------case1-------:", regionID)
+	//nodeID := tools.RandNodeID()
+	//fmt.Println(nodeID)
+	//regionID, ok := testsuite.TestNewValidatorRegion(nodeID)
+	//if !ok {
+	//	fmt.Println("TestNewValidatorRegion error")
+	//	return
+	//}
+	//fmt.Println("------------case1-------:", regionID)
 
-	kycDel, ok := testsuite.TestKycDelegate("b57407f6-e92b-4a01-aa66-562167e51e6f")
-	if !ok {
-		fmt.Println("TestKycDelegate error")
-	}
-	fmt.Println("------------case2-------:", kycDel)
+	//kycDel, ok := testsuite.TestKycDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
+	//if !ok {
+	//	fmt.Println("TestKycDelegate error")
+	//}
+	//fmt.Println("------------case2-------:", kycDel)
 
-	del, ok := testsuite.TestDelegate()
-	if !ok {
-		fmt.Println("TestDelegate error")
-	}
-	fmt.Println("------------case3-------:", del)
+	//del, ok := testsuite.TestDelegate()
+	//if !ok {
+	//	fmt.Println("TestDelegate error")
+	//}
+	//fmt.Println("------------case3-------:", del)
+	//
+	//mixDel, ok := testsuite.TestMixDelegate(regionID)
+	//if !ok {
+	//	fmt.Println("TestMixDelegate error")
+	//}
+	//fmt.Println("------------case4-------:", mixDel)
 
-	mixDel, ok := testsuite.TestMixDelegate(regionID)
+	//kycUnDel, ok := testsuite.TestKycUnDelegate(regionID)
+	//if !ok {
+	//	fmt.Println("TestKycUnDelegate error")
+	//	return
+	//}
+	//fmt.Println("------------case5-------:", kycUnDel)
+
+	//kycUnDel, ok := testsuite.TestUnDelegate()
+	//if !ok {
+	//	fmt.Println("TestUnDelegate error")
+	//	return
+	//}
+	//fmt.Println("------------case6-------:", kycUnDel)
+
+	mixUnDel, ok := testsuite.TestMixUnDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
 	if !ok {
 		fmt.Println("TestMixDelegate error")
+		return
 	}
-	fmt.Println("------------case4-------:", mixDel)
+	fmt.Println("------------case7-------:", mixUnDel)
 
 	//goroutineNum := 4
 	//wg := sync.WaitGroup{}

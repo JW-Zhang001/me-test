@@ -9,7 +9,7 @@ import (
 )
 
 func TestKeeper_NewKyc(t *testing.T) {
-	toAddr, _ := tools.GetAccAddress(tools.GenAccPriKey())
+	toAddr, _ := tools.GetAccAddress(tools.GenAccPrivKey())
 
 	type args struct {
 		privKey  string

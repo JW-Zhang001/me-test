@@ -34,3 +34,26 @@ func TestNewDelegate(privKey string, amount int64) error {
 	}
 	return nil
 }
+
+type UnDelegateArgs struct {
+	PrivKey string
+	Amount  sdk.Coin
+	Kyc     bool
+	*Dependence
+}
+
+func TestUnDelegate(privKey string, amount int64, kyc bool) error {
+	testdata := UnDelegateArgs{privKey, sdk.NewInt64Coin(sdk.DefaultBondDenom, amount),
+		kyc, &Dependence{extract}}
+
+	res, err := StakeKeeper.UnDelegate(privKey, testdata.Amount, testdata.Kyc)
+	if err != nil {
+		zap.S().Errorf("UnDelegate error %v", err)
+		return err
+	}
+	if res.TxResponse.Code != 0 {
+		zap.S().Errorf("UnDelegate TxResponse error %v", res.TxResponse.RawLog)
+		return err
+	}
+	return nil
+}

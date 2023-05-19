@@ -6,6 +6,7 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+	"me-test/config"
 	"me-test/tools"
 )
 
@@ -22,14 +23,14 @@ func (k *Keeper) Delegate(delPriKey string, amount sdk.Coin) (*txpb.BroadcastTxR
 		return nil, fmt.Errorf("msg.ValidateBasic error: %v", msg.ValidateBasic())
 	}
 
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, delPriKey, msg)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, delPriKey, msg, config.DefaultFees)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func (k *Keeper) Undelegate(delPriKey string, amount sdk.Coin, kyc bool) (*txpb.BroadcastTxResponse, error) {
+func (k *Keeper) UnDelegate(delPriKey string, amount sdk.Coin, kyc bool) (*txpb.BroadcastTxResponse, error) {
 	zap.S().Info("Undelegate/delPriKey: ", delPriKey)
 
 	delAccAddr, _ := tools.GetAccAddress(delPriKey)
@@ -42,7 +43,7 @@ func (k *Keeper) Undelegate(delPriKey string, amount sdk.Coin, kyc bool) (*txpb.
 		return nil, fmt.Errorf("msg.ValidateBasic error: %v", msg.ValidateBasic())
 	}
 
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, delPriKey, msg)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, delPriKey, msg, config.DefaultFees)
 	if err != nil {
 		return nil, err
 	}

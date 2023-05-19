@@ -97,7 +97,7 @@ func (c *CmClient) GetAccountI(ctx context.Context, address string) (acc authpb.
 	return acc, nil
 }
 
-func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq uint64, accNum uint64) (authsign.Tx, error) {
+func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq, accNum, fee uint64) (authsign.Tx, error) {
 	var (
 		txBuilder = c.txConfig.NewTxBuilder()
 	)
@@ -106,7 +106,7 @@ func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq uint64, ac
 	if err != nil {
 		return nil, err
 	}
-	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, config.DefaultFees))
+	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, int64(fee)))
 	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit))
 	txBuilder.SetFeeAmount(fees)
 
@@ -172,7 +172,7 @@ func (c *CmClient) GetTx(txHash string) (*txpb.GetTxResponse, error) {
 	return grpcRes, nil
 }
 
-func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg sdk.Msg) (*txpb.BroadcastTxResponse, error) {
+func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg sdk.Msg, fee uint64) (*txpb.BroadcastTxResponse, error) {
 	fromAccAddr, err := tools.GetAccAddress(fromPrivKey)
 	if err != nil {
 		return nil, err
@@ -182,7 +182,7 @@ func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg 
 		return nil, err
 	}
 	pk256k1, _ := tools.ConvertsAccPrivKey(fromPrivKey)
-	signTx, err := c.BuildTx(msg, pk256k1, i.GetSequence(), i.GetAccountNumber())
+	signTx, err := c.BuildTx(msg, pk256k1, i.GetSequence(), i.GetAccountNumber(), fee)
 	if err != nil {
 		return nil, err
 	}

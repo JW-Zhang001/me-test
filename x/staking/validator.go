@@ -3,6 +3,7 @@ package staking
 import (
 	"fmt"
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
+	"me-test/config"
 
 	"github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -53,7 +54,7 @@ func (k *Keeper) NewValidator(privKey, tmPubKeyStr, coinStr, moniker string) (*t
 		return nil, err
 	}
 
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, config.DefaultFees)
 	if err != nil {
 		return nil, err
 	}

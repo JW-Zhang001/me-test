@@ -58,7 +58,8 @@ func TestKeeper_TxToAdmin(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestKeeper_TxToAdmin", args{config.SuperAdminPrivKey, sdk.NewInt64Coin(sdk.BaseMEDenom, 100000000)}, "", false},
+		{"TestKeeper_TxToAdmin_Case1", args{config.SuperAdminPrivKey, sdk.NewInt64Coin(sdk.BaseMEDenom, 1000000000)}, "", false},
+		{"TestKeeper_TxToAdmin_Case2", args{config.SuperAdminPrivKey, sdk.NewInt64Coin(sdk.BaseMEDenom, 100000000)}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

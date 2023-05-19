@@ -4,9 +4,11 @@ go 1.20
 
 require (
 	github.com/cosmos/cosmos-sdk v0.46.7
+	github.com/google/uuid v1.3.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/tendermint/tendermint v0.34.24
 	go.uber.org/zap v1.23.0
+	golang.org/x/crypto v0.2.0
 	google.golang.org/grpc v1.53.0
 )
 
@@ -60,7 +62,6 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect

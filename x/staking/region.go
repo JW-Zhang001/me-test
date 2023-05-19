@@ -5,6 +5,7 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+	"me-test/config"
 	"me-test/tools"
 	"strings"
 )
@@ -21,7 +22,7 @@ func (k *Keeper) NewRegion(privKey, regionId, name, validator string) (*txpb.Bro
 		return nil, fmt.Errorf("ValidateBasic error")
 	}
 
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, config.DefaultFees)
 	if err != nil {
 		return nil, err
 	}
