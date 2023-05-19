@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-var StakeQuery, _ = NewStakeQuery()
-
 func TestCmClient_Delegation(t *testing.T) {
 
 	type args struct {

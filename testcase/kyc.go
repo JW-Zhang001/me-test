@@ -14,34 +14,30 @@ type KycArgs struct {
 }
 
 func NewKycArgs() (KycArgs, error) {
-	PrivKey := tools.GenAccPriKey()
-
-	return KycArgs{config.SuperAdminPrivKey, PrivKey, "${RegionID}", &Dependence{extract}}, nil
+	return KycArgs{config.SuperAdminPrivKey, "", "${RegionID}", &Dependence{extract}}, nil
 }
 
-func TestNewKyc(regionID string) (userAccInfo map[string]string, err error) {
+func TestNewKyc(regionID, userPrivKey string) error {
 	testdata, err := NewKycArgs()
 	if err != nil {
-		return userAccInfo, err
+		return err
 	}
-	userAccInfo = make(map[string]string)
 
-	privKey := testdata.PrivKey
-	userPrivKey := testdata.ToAddr
+	fromPrivKey := testdata.PrivKey
+
 	userAccAddr, err := tools.GetAccAddress(userPrivKey)
 	if err != nil {
-		return userAccInfo, err
+		return err
 	}
-	res, err := StakeKeeper.NewKyc(privKey, userAccAddr.String(), regionID)
+	res, err := StakeKeeper.NewKyc(fromPrivKey, userAccAddr.String(), regionID)
 	if err != nil {
 		zap.S().Errorf("NewKyc error %v", err)
-		return userAccInfo, err
+		return err
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("NewKyc TxResponse error %v", res.TxResponse.RawLog)
-		return userAccInfo, err
+		return err
 	}
-	userAccInfo["PrivKey"] = userPrivKey
-	userAccInfo["Addr"] = userAccAddr.String()
-	return userAccInfo, nil
+
+	return nil
 }

@@ -17,22 +17,20 @@ func NewDelegateArgs(amount int64) (DelegateArgs, error) {
 	return DelegateArgs{"${PrivKey}", amt, &Dependence{extract}}, nil
 }
 
-func TestNewDelegate(privKey string, amount int64) (string, error) {
+func TestNewDelegate(privKey string, amount int64) error {
 	testdata, err := NewDelegateArgs(amount)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	amt := testdata.Amount
-
-	res, err := StakeKeeper.Delegate(privKey, amt)
+	res, err := StakeKeeper.Delegate(privKey, testdata.Amount)
 	if err != nil {
 		zap.S().Errorf("Delegate error %v", err)
-		return "", err
+		return err
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("Delegate TxResponse error %v", res.TxResponse.RawLog)
-		return "", err
+		return err
 	}
-	return privKey, nil
+	return nil
 }

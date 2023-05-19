@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-var BankQuery, Cancel = NewBankQuery()
-
 func TestCmClient_Balance(t *testing.T) {
 
 	type args struct {
