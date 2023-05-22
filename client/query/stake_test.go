@@ -3,6 +3,7 @@ package query
 import (
 	"context"
 	"fmt"
+	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"testing"
 )
@@ -29,6 +30,34 @@ func TestCmClient_Delegation(t *testing.T) {
 				return
 			}
 			fmt.Println(got)
+		})
+	}
+}
+
+
+func TestCmClient_DepositByAcc(t *testing.T) {
+
+	type args struct {
+		ctx     context.Context
+		addr string
+		queryType stakepb.FixedDepositState
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"TestCmClient_DepositByAcc", args{StakeQuery.Ctx, "cosmos1yp07x6wjruw28066p9nfugzdrvxyxgu09frxkx", stakepb.FixedDepositState_Expired}, "", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := StakeQuery.DepositByAcc(tt.args.ctx, tt.args.addr, tt.args.queryType)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DepositByAcc() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			fmt.Println(got.FixedDeposit[0].Id)
 		})
 	}
 }

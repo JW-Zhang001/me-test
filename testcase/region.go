@@ -1,9 +1,12 @@
 package testcase
 
 import (
+	"fmt"
+	"math/rand"
+
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"math/rand"
+
 	"me-test/config"
 )
 
@@ -46,7 +49,7 @@ func TestNewRegion(validatorID string) (regionID string, err error) {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("NewRegion TxResponse error %v", res.TxResponse.RawLog)
-		return "", err
+		return "", fmt.Errorf("NewRegion TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	return regionID, nil
 }

@@ -23,30 +23,30 @@ func NewBankQuery() (*Query, context.CancelFunc) {
 	return &Query{Cli: c, Ctx: ctx}, cancel
 }
 
-func (k *Query) Balance(ctx context.Context, addr string) (*bankpb.QueryBalanceResponse, error) {
+func (q *Query) Balance(ctx context.Context, addr string) (*bankpb.QueryBalanceResponse, error) {
 	req := &bankpb.QueryBalanceRequest{Address: addr, Denom: sdk.BaseMEDenom}
 
-	rpcRes, err := k.Cli.BankClient.Balance(ctx, req)
+	rpcRes, err := q.Cli.BankClient.Balance(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (k *Query) AllBalances(ctx context.Context, addr string) (*bankpb.QueryAllBalancesResponse, error) {
+func (q *Query) AllBalances(ctx context.Context, addr string) (*bankpb.QueryAllBalancesResponse, error) {
 	req := &bankpb.QueryAllBalancesRequest{Address: addr}
 
-	rpcRes, err := k.Cli.BankClient.AllBalances(ctx, req)
+	rpcRes, err := q.Cli.BankClient.AllBalances(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (k *Query) TotalSupply(ctx context.Context) (*bankpb.QueryTotalSupplyResponse, error) {
+func (q *Query) TotalSupply(ctx context.Context) (*bankpb.QueryTotalSupplyResponse, error) {
 	req := &bankpb.QueryTotalSupplyRequest{}
 
-	rpcRes, err := k.Cli.BankClient.TotalSupply(ctx, req)
+	rpcRes, err := q.Cli.BankClient.TotalSupply(ctx, req)
 	if err != nil {
 		return nil, err
 	}

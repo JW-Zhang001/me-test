@@ -1,6 +1,8 @@
 package testcase
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.uber.org/zap"
 )
@@ -31,7 +33,7 @@ func TestTx(privKey, toAddr string, amount int64) error {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("TestTx TxResponse error %v", res.TxResponse.RawLog)
-		return err
+		return fmt.Errorf("TestTx TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	return nil
 }

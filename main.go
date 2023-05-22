@@ -6,14 +6,14 @@ import (
 )
 
 func main() {
-	//nodeID := tools.RandNodeID()
-	//fmt.Println(nodeID)
-	//regionID, ok := testsuite.TestNewValidatorRegion(nodeID)
-	//if !ok {
-	//	fmt.Println("TestNewValidatorRegion error")
-	//	return
-	//}
-	//fmt.Println("------------case1-------:", regionID)
+	// nodeID := tools.RandNodeID()
+	// fmt.Println(nodeID)
+	// regionID, ok := testsuite.TestNewValidatorRegion(nodeID)
+	// if !ok {
+	// 	fmt.Println("TestNewValidatorRegion error")
+	// 	return
+	// }
+	// fmt.Println("------------case1-------:", regionID)
 
 	//kycDel, ok := testsuite.TestKycDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
 	//if !ok {
@@ -47,12 +47,33 @@ func main() {
 	//}
 	//fmt.Println("------------case6-------:", kycUnDel)
 
-	mixUnDel, ok := testsuite.TestMixUnDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
+	// mixUnDel, ok := testsuite.TestMixUnDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
+	// if !ok {
+	// 	fmt.Println("TestMixDelegate error")
+	// 	return
+	// }
+	// fmt.Println("------------case7-------:", mixUnDel)
+
+	// depAccAddr, ok := testsuite.TestKycDeposit("73afbfa2-d9b2-41c8-92f7-da0037185338")
+	// if !ok {
+	// 	fmt.Println("TestNotKycDeposit error")
+	// 	return
+	// }
+	// fmt.Println("------------case8-------:", depAccAddr)
+
+	// depAccAddr, ok := testsuite.TestExpireDepositWithdraw("ba51de1d-c17a-4e43-bc19-0da82083bf9c")
+	// if !ok {
+	// 	fmt.Println("TestExpireDepositWithdraw error")
+	// 	return
+	// }
+	// fmt.Println("------------case9-------:", depAccAddr)
+
+	depAccAddr, ok := testsuite.TestNotExpireDepositWithdraw("ba51de1d-c17a-4e43-bc19-0da82083bf9c")
 	if !ok {
-		fmt.Println("TestMixDelegate error")
+		fmt.Println("TestNotExpireDepositWithdraw error")
 		return
 	}
-	fmt.Println("------------case7-------:", mixUnDel)
+	fmt.Println("------------case10-------:", depAccAddr)
 
 	//goroutineNum := 4
 	//wg := sync.WaitGroup{}

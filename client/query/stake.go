@@ -17,9 +17,18 @@ func NewStakeQuery() (*Query, context.CancelFunc) {
 	return &Query{Cli: c, Ctx: ctx}, cancel
 }
 
-func (k *Query) Delegation(ctx context.Context, delAddr string) (*stakepb.QueryDelegationResponse, error) {
+func (q *Query) Delegation(ctx context.Context, delAddr string) (*stakepb.QueryDelegationResponse, error) {
 	req := &stakepb.QueryDelegationRequest{DelegatorAddr: delAddr, ValidatorAddr: ""}
-	rpcRes, err := k.Cli.StakeClient.Delegation(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Delegation(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rpcRes, nil
+}
+
+func (q *Query) DepositByAcc(ctx context.Context, Addr string, queryType stakepb.FixedDepositState) (*stakepb.QueryFixedDepositByAcctResponse, error) {
+	req := &stakepb.QueryFixedDepositByAcctRequest{Account: Addr, QueryType: queryType}
+	rpcRes, err := q.Cli.StakeClient.FixedDepositByAcct(ctx, req)
 	if err != nil {
 		return nil, err
 	}

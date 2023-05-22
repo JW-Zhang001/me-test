@@ -1,6 +1,8 @@
 package testcase
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.uber.org/zap"
 )
@@ -30,7 +32,7 @@ func TestNewDelegate(privKey string, amount int64) error {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("Delegate TxResponse error %v", res.TxResponse.RawLog)
-		return err
+		return fmt.Errorf("Delegate TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	return nil
 }
@@ -53,7 +55,7 @@ func TestUnDelegate(privKey string, amount int64, kyc bool) error {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("UnDelegate TxResponse error %v", res.TxResponse.RawLog)
-		return err
+		return fmt.Errorf("UnDelegate TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	return nil
 }

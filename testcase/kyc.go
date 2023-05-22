@@ -1,9 +1,11 @@
 package testcase
 
 import (
-	"go.uber.org/zap"
+	"fmt"
 	"me-test/config"
 	"me-test/tools"
+
+	"go.uber.org/zap"
 )
 
 type KycArgs struct {
@@ -36,7 +38,7 @@ func TestNewKyc(regionID, userPrivKey string) error {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("NewKyc TxResponse error %v", res.TxResponse.RawLog)
-		return err
+		return fmt.Errorf("NewKyc TxResponse.Code error %v", res.TxResponse.Code)
 	}
 
 	return nil

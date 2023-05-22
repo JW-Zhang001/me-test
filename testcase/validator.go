@@ -43,7 +43,7 @@ func TestNewValidator(nodeID, coinStr string) (validatorID string, err error) {
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("NewValidator TxResponse error %v", res.TxResponse.RawLog)
-		return "", err
+		return "", fmt.Errorf("NewValidator TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	validatorID, err = StakeKeeper.GetValidatorID(res)
 	if err != nil {
