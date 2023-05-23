@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var ctx, cancel = context.WithTimeout(context.Background(), config.Timeout)
+var ctx, _ = context.WithTimeout(context.Background(), config.Timeout)
 
 var c, _ = client.NewCmClient("")
 

@@ -78,3 +78,25 @@ func (k *Keeper) GetValidatorID(res *txpb.BroadcastTxResponse) (validatorID stri
 	}
 	return validatorID, nil
 }
+
+func (k *Keeper) EditValidator(privKey, operatorAddress, ownerAddress, moniker string) (*txpb.BroadcastTxResponse, error) {
+	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	valAddr := sdk.ValAddress(fromAccAddr)
+
+	zap.S().Info("EditValidator/fromAddr: ", fromAccAddr.String())
+	zap.S().Info("EditValidator/valAddr: ", valAddr.String())
+	zap.S().Info("EditValidator/operatorAddress: ", operatorAddress)
+	zap.S().Info("EditValidator/ownerAddress: ", ownerAddress)
+
+	description := stakepb.NewDescription(moniker, "", "", "", "")
+	msg := stakepb.NewMsgEditValidator(valAddr, description, nil, ownerAddress, operatorAddress)
+	if msg.ValidateBasic() != nil {
+		return nil, fmt.Errorf("msg.ValidateBasic() error: %v", msg.ValidateBasic())
+	}
+
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, config.DefaultFees)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}

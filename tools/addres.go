@@ -4,9 +4,6 @@ import (
 	"encoding/hex"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"math/rand"
-	"strconv"
-	"time"
 )
 
 // ConvertsAccPrivKey Converts a private key of type secp256k1.
@@ -47,13 +44,4 @@ func GenWalletAcc() (map[string]string, error) {
 	walletAcc["PrivKey"] = privKey
 	walletAcc["Addr"] = addr
 	return walletAcc, nil
-}
-
-func RandNodeID() string {
-	src := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(src)
-	num := r.Intn(20) + 1
-	nodeID := "node" + strconv.Itoa(num)
-
-	return nodeID
 }

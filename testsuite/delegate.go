@@ -41,14 +41,6 @@ func TestKycDelegate(regionID string) (map[string]string, bool) {
 	}
 	userPrivKey := walletAcc["PrivKey"]
 
-	if regionID == "" {
-		newRegionID, ok := TestNewValidatorRegion(tools.RandNodeID())
-		if !ok {
-			return walletAcc, false
-		}
-		regionID = newRegionID
-	}
-
 	if err = testcase.TestNewKyc(regionID, userPrivKey); err != nil {
 		return walletAcc, false
 	}

@@ -13,5 +13,5 @@ var (
 
 func init() {
 	BankQuery, Cancel = NewBankQuery()
-	StakeQuery, _ = NewBankQuery()
+	StakeQuery, _ = NewStakeQuery()
 }

@@ -53,3 +53,39 @@ func TestNewValidator(nodeID, coinStr string) (validatorID string, err error) {
 	zap.S().Info("NewValidator/validatorID: ", validatorID)
 	return validatorID, nil
 }
+
+type EditValidatorArgs struct {
+	PrivKey         string
+	OperatorAddress string
+	OwnerAddress    string
+	Moniker         string
+	*Dependence
+}
+
+func NewEditValidatorArgs(ownerAddr, moniker string) (EditValidatorArgs, error) {
+	operatorAddr, err := TestNewValidator(moniker, config.ValidatorStakeAmount)
+	if err != nil {
+		zap.S().Errorf("Init NewEditValidatorArgs error %v", err)
+		return EditValidatorArgs{}, err
+	}
+	return EditValidatorArgs{config.SuperAdminPrivKey, operatorAddr, ownerAddr, moniker,
+		&Dependence{extract}}, nil
+}
+
+func TestEditValidator(ownerAddr, moniker string) (validatorID string, err error) {
+	testdata, err := NewEditValidatorArgs(ownerAddr, moniker)
+	if err != nil {
+		return "", err
+	}
+	res, err := StakeKeeper.EditValidator(testdata.PrivKey, testdata.OperatorAddress, testdata.OwnerAddress, testdata.Moniker)
+	if err != nil {
+		zap.S().Errorf("EditValidator error %v", err)
+		return "", err
+	}
+	if res.TxResponse.Code != 0 {
+		zap.S().Errorf("EditValidator TxResponse error %v", res.TxResponse.RawLog)
+		return "", fmt.Errorf("EditValidator TxResponse.Code error %v", res.TxResponse.Code)
+	}
+	// validatorID is operatorAddress
+	return testdata.OperatorAddress, nil
+}
