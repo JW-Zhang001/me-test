@@ -1,19 +1,14 @@
 package main
 
-import (
-	"fmt"
-	"me-test/testsuite"
-)
-
 func main() {
-	// nodeID := tools.RandNodeID()
-	// fmt.Println(nodeID)
-	// regionID, ok := testsuite.TestNewValidatorRegion(nodeID)
-	// if !ok {
-	// 	fmt.Println("TestNewValidatorRegion error")
-	// 	return
-	// }
-	// fmt.Println("------------case1-------:", regionID)
+	//nodeID := tools.RandNodeID()
+	//fmt.Println(nodeID)
+	//regionID, ok := testsuite.TestNewValidatorRegion("node2")
+	//if !ok {
+	//	fmt.Println("TestNewValidatorRegion error")
+	//	return
+	//}
+	//fmt.Println("------------case1-------:", regionID)
 
 	//kycDel, ok := testsuite.TestKycDelegate("73afbfa2-d9b2-41c8-92f7-da0037185338")
 	//if !ok {
@@ -68,12 +63,20 @@ func main() {
 	// }
 	// fmt.Println("------------case9-------:", depAccAddr)
 
-	depAccAddr, ok := testsuite.TestNotExpireDepositWithdraw("ba51de1d-c17a-4e43-bc19-0da82083bf9c")
-	if !ok {
-		fmt.Println("TestNotExpireDepositWithdraw error")
-		return
-	}
-	fmt.Println("------------case10-------:", depAccAddr)
+	// depAccAddr, ok := testsuite.TestNotExpireDepositWithdraw("ba51de1d-c17a-4e43-bc19-0da82083bf9c")
+	// if !ok {
+	// 	fmt.Println("TestNotExpireDepositWithdraw error")
+	// 	return
+	// }
+	// fmt.Println("------------case10-------:", depAccAddr)
+
+	//notKycFees, ok := testsuite.TestNotKycFees()
+	//if !ok {
+	//	fmt.Println("TestNotKycFees error")
+	//	return
+	//}
+	//
+	//fmt.Println("------------case11-------:", notKycFees)
 
 	//goroutineNum := 4
 	//wg := sync.WaitGroup{}

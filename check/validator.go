@@ -9,12 +9,12 @@ import (
 )
 
 /*
-GetStakeTokensPool
+QueryStakeTokensPool
 @Description: get stakeTokensPool and bondedStakeTokensPool balance
 @return balancesList
 @return err
 */
-func GetStakeTokensPool() (balancesList []*bankpb.QueryBalanceResponse, err error) {
+func QueryStakeTokensPool() (balancesList []*bankpb.QueryBalanceResponse, err error) {
 	stakeTokensPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["stake_tokens_pool"])
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ CheckerNewValidator
 */
 func CheckerNewValidator(fn func(nodeID, coinStr string) (string, error)) func(nodeID, coinStr string) (string, error) {
 	return func(nodeID, coinStr string) (string, error) {
-		balancesList, err := GetStakeTokensPool()
+		balancesList, err := QueryStakeTokensPool()
 		if err != nil {
 			zap.S().Errorf("NewValidator before get balance error: %v", err)
 			return "", err
@@ -44,7 +44,7 @@ func CheckerNewValidator(fn func(nodeID, coinStr string) (string, error)) func(n
 
 		result, err := fn(nodeID, coinStr)
 
-		laterBalancesList, err := GetStakeTokensPool()
+		laterBalancesList, err := QueryStakeTokensPool()
 		if err != nil {
 			zap.S().Errorf("NewValidator later get balance error: %v", err)
 			return "", err

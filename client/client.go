@@ -107,7 +107,7 @@ func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq, accNum, f
 		return nil, err
 	}
 	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, int64(fee)))
-	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit * 2))
+	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit))
 	txBuilder.SetFeeAmount(fees)
 
 	// First round: we gather all the signer infos. We use the "set empty signature" hack to do that.

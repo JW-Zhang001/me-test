@@ -34,3 +34,12 @@ func (q *Query) DepositByAcc(ctx context.Context, Addr string, queryType stakepb
 	}
 	return rpcRes, nil
 }
+
+func (q *Query) KycList(ctx context.Context) (*stakepb.QueryAllKycResponse, error) {
+	req := &stakepb.QueryAllKycRequest{}
+	rpcRes, err := q.Cli.StakeClient.KycAll(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rpcRes, nil
+}
