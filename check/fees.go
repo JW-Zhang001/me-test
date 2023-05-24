@@ -2,12 +2,13 @@ package check
 
 import (
 	"fmt"
-	q "me-test/client/query"
-	"me-test/config"
-	"me-test/tools"
 
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"go.uber.org/zap"
+
+	"me-test/client"
+	q "me-test/client/query"
+	"me-test/config"
 )
 
 func QueryTreasuryPool() (*bankpb.QueryBalanceResponse, error) {
@@ -133,7 +134,7 @@ func CheckerKycFeesValidatorIsUser(fn func(privKey, toAddr string, amount int64)
 			zap.S().Errorf("Before get PMBalance error: %v", err)
 			return err
 		}
-		fromAddr, _ := tools.GetAccAddrStr(privKey)
+		fromAddr, _ := client.GetAccAddrStr(privKey)
 
 		ownerAddr, err := GetValidatorOwner(fromAddr)
 		if err != nil {

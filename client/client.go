@@ -2,9 +2,7 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"go.uber.org/zap"
-	"me-test/tools"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -42,11 +40,11 @@ type CmClient struct {
 func init() {
 	// register custom Denom
 	if err := sdk.RegisterDenom(sdk.MEDenom, sdk.OneDec()); err != nil {
-		fmt.Println("register denom error:", err)
+		zap.S().Error("register denom error:", err)
 		return
 	}
 	if err := sdk.RegisterDenom(sdk.BaseMEDenom, sdk.NewDecWithPrec(1, sdk.MEExponent)); err != nil {
-		fmt.Println("register denom error:", err)
+		zap.S().Error("register denom error:", err)
 		return
 	}
 }
@@ -107,7 +105,7 @@ func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq, accNum, f
 		return nil, err
 	}
 	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, int64(fee)))
-	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit))
+	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit * 2))
 	txBuilder.SetFeeAmount(fees)
 
 	// First round: we gather all the signer infos. We use the "set empty signature" hack to do that.
@@ -156,7 +154,22 @@ func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error
 		},
 	)
 	if err != nil {
-		fmt.Println("BroadcastTx is err:", err)
+		zap.S().Error("BroadcastTx is err:", err)
+		return nil, err
+	}
+	return grpcRes, nil
+}
+
+func (c *CmClient) BroadcastCheckTx(txBytes []byte) (*txpb.BroadcastTxResponse, error) {
+	grpcRes, err := c.TxClient.BroadcastTx(
+		context.Background(),
+		&txpb.BroadcastTxRequest{
+			Mode:    txpb.BroadcastMode_BROADCAST_MODE_SYNC,
+			TxBytes: txBytes, // Proto-binary of the signed transaction, see previous step.
+		},
+	)
+	if err != nil {
+		zap.S().Error("BroadcastTx is err:", err)
 		return nil, err
 	}
 	return grpcRes, nil
@@ -166,14 +179,14 @@ func (c *CmClient) GetTx(txHash string) (*txpb.GetTxResponse, error) {
 	req := &txpb.GetTxRequest{Hash: txHash}
 	grpcRes, err := c.TxClient.GetTx(context.Background(), req)
 	if err != nil {
-		fmt.Println("GetTx is err:", err)
+		zap.S().Error("GetTx is err:", err)
 		return nil, err
 	}
 	return grpcRes, nil
 }
 
 func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg sdk.Msg, fee uint64) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, err := tools.GetAccAddress(fromPrivKey)
+	fromAccAddr, err := GetAccAddress(fromPrivKey)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +194,7 @@ func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg 
 	if err != nil {
 		return nil, err
 	}
-	pk256k1, _ := tools.ConvertsAccPrivKey(fromPrivKey)
+	pk256k1, _ := ConvertsAccPrivKey(fromPrivKey)
 	signTx, err := c.BuildTx(msg, pk256k1, i.GetSequence(), i.GetAccountNumber(), fee)
 	if err != nil {
 		return nil, err
@@ -195,5 +208,31 @@ func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg 
 		return nil, err
 	}
 	zap.S().Info("SendBroadcastTx Response: ", txRes)
+	return txRes, nil
+}
+
+func (c *CmClient) SendBroadcastCheckTx(ctx context.Context, fromPrivKey string, msg sdk.Msg, sequence, fee uint64) (*txpb.BroadcastTxResponse, error) {
+	fromAccAddr, err := GetAccAddress(fromPrivKey)
+	if err != nil {
+		return nil, err
+	}
+	i, err := c.GetAccountI(ctx, fromAccAddr.String())
+	if err != nil {
+		return nil, err
+	}
+	pk256k1, _ := ConvertsAccPrivKey(fromPrivKey)
+	signTx, err := c.BuildTx(msg, pk256k1, sequence, i.GetAccountNumber(), fee)
+	if err != nil {
+		return nil, err
+	}
+	txBytes, err := c.Encoder(signTx)
+	if err != nil {
+		return nil, err
+	}
+	txRes, err := c.BroadcastCheckTx(txBytes)
+	if err != nil {
+		return nil, err
+	}
+	zap.S().Info("SendBroadcastCheckTx Response: ", txRes)
 	return txRes, nil
 }

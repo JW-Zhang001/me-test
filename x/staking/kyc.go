@@ -5,12 +5,12 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
 )
 
 func (k *Keeper) NewKyc(privKey, toAddr, regionId string) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	fromAccAddr, _ := client.GetAccAddress(privKey)
 	creator := fromAccAddr.String()
 	zap.S().Info("NewKyc/fromAccAddr: ", creator)
 	zap.S().Info("NewKyc/toAddr: ", toAddr)

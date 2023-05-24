@@ -5,13 +5,13 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"go.uber.org/zap"
+	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
 )
 
 func (k *Keeper) TransferTx(privKey, toAddr string, amount sdk.Coin) (*txpb.BroadcastTxResponse, error) {
 
-	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	fromAccAddr, _ := client.GetAccAddress(privKey)
 	toAccAddr, err := sdk.AccAddressFromBech32(toAddr)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (k *Keeper) TransferTx(privKey, toAddr string, amount sdk.Coin) (*txpb.Broa
 }
 
 func (k *Keeper) TxToAdmin(privKey string, amount sdk.Coin) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, err := tools.GetAccAddress(privKey)
+	fromAccAddr, err := client.GetAccAddress(privKey)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (k *Keeper) TxToAdmin(privKey string, amount sdk.Coin) (*txpb.BroadcastTxRe
 	if msg.ValidateBasic() != nil {
 		return nil, err
 	}
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, config.DefaultFees)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, 0)
 	if err != nil {
 		return nil, err
 	}

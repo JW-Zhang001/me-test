@@ -2,9 +2,9 @@ package testsuite
 
 import (
 	"me-test/check"
+	"me-test/client"
 	"me-test/config"
 	"me-test/testcase"
-	"me-test/tools"
 )
 
 /*
@@ -35,7 +35,7 @@ TestKycDelegate
 */
 func TestKycDelegate(regionID string) (map[string]string, bool) {
 	// New user account
-	walletAcc, err := tools.GenWalletAcc()
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
@@ -60,7 +60,7 @@ TestDelegate
 @return map[string]string Wallet account
 */
 func TestDelegate() (map[string]string, bool) {
-	walletAcc, err := tools.GenWalletAcc()
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}

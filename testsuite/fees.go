@@ -1,14 +1,15 @@
 package testsuite
 
 import (
+	"go.uber.org/zap"
 	"me-test/check"
+	"me-test/client"
 	"me-test/config"
 	"me-test/testcase"
-	"me-test/tools"
 )
 
 func TestNotKycFees() (map[string]string, bool) {
-	walletAcc, err := tools.GenWalletAcc()
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
@@ -21,11 +22,11 @@ func TestNotKycFees() (map[string]string, bool) {
 }
 
 func TestKycFeesValidatorOwnerIsPM(regionID string) (map[string]string, bool) {
-	walletAcc, err := tools.GenWalletAcc()
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
-	toAcc, err := tools.GenWalletAcc()
+	toAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
@@ -44,13 +45,30 @@ func TestKycFeesValidatorOwnerIsPM(regionID string) (map[string]string, bool) {
 	return walletAcc, true
 }
 
-func TestKycFeesValidatorOwnerIsUser(regionID string) (map[string]string, bool) {
-	walletAcc, err := tools.GenWalletAcc()
+func TestKycFeesValidatorOwnerIsUser(nodeID string) (map[string]string, bool) {
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
-	toAcc, err := tools.GenWalletAcc()
+	toAcc, err := client.GenWalletAcc()
 	if err != nil {
+		return walletAcc, false
+	}
+
+	ownerAcc, err := client.GenWalletAcc()
+	if err != nil {
+		return walletAcc, false
+	}
+
+	validatorID, ok := TestEditValidator(ownerAcc["Addr"], nodeID)
+	if !ok {
+		zap.S().Error("TestEditValidator error")
+		return walletAcc, false
+	}
+
+	regionID, err := testcase.TestNewRegion(validatorID)
+	if err != nil {
+		zap.S().Error("TestNewRegion error")
 		return walletAcc, false
 	}
 

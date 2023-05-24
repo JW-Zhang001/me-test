@@ -2,21 +2,21 @@ package staking
 
 import (
 	"fmt"
-	txpb "github.com/cosmos/cosmos-sdk/types/tx"
-	"me-test/config"
 
 	"github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmcrypto "github.com/tendermint/tendermint/crypto"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"go.uber.org/zap"
 
-	"me-test/tools"
+	"me-test/client"
+	"me-test/config"
 )
 
 func (k *Keeper) NewValidator(privKey, tmPubKeyStr, coinStr, moniker string) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	fromAccAddr, _ := client.GetAccAddress(privKey)
 	valAddr := sdk.ValAddress(fromAccAddr)
 	zap.S().Info("NewValidator/fromAccAddr: ", fromAccAddr.String())
 	zap.S().Info("NewValidator/valAddr: ", valAddr.String())
@@ -80,7 +80,7 @@ func (k *Keeper) GetValidatorID(res *txpb.BroadcastTxResponse) (validatorID stri
 }
 
 func (k *Keeper) EditValidator(privKey, operatorAddress, ownerAddress, moniker string) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	fromAccAddr, _ := client.GetAccAddress(privKey)
 	valAddr := sdk.ValAddress(fromAccAddr)
 
 	zap.S().Info("EditValidator/fromAddr: ", fromAccAddr.String())

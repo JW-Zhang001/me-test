@@ -6,14 +6,14 @@ import (
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
 
+	"me-test/client"
 	"me-test/client/query"
 	"me-test/config"
 	"me-test/testcase"
-	"me-test/tools"
 )
 
 func TestKycDeposit(regionID string) (map[string]string, bool) {
-	walletAcc, err := tools.GenWalletAcc()
+	walletAcc, err := client.GenWalletAcc()
 	if err != nil {
 		return walletAcc, false
 	}
@@ -39,7 +39,7 @@ func TestExpireDepositWithdraw(regionID string) (map[string]string, bool) {
 		return walletAcc, false
 	}
 	// 60s = Term1Months
-	time.Sleep(time.Second * 60)
+	time.Sleep(time.Second * 65)
 
 	FixedDeposit, err := query.StakeQuery.DepositByAcc(query.StakeQuery.Ctx, walletAcc["Addr"], stakepb.FixedDepositState_Expired)
 	if err != nil {

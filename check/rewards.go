@@ -3,12 +3,13 @@ package check
 import (
 	"fmt"
 	"math"
-	q "me-test/client/query"
-	"me-test/config"
-	"me-test/testcase"
 
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"go.uber.org/zap"
+
+	q "me-test/client/query"
+	"me-test/config"
+	"me-test/testcase"
 )
 
 const (

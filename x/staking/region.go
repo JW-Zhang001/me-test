@@ -2,16 +2,18 @@ package staking
 
 import (
 	"fmt"
+	"strings"
+
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+
+	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
-	"strings"
 )
 
 func (k *Keeper) NewRegion(privKey, regionId, name, validator string) (*txpb.BroadcastTxResponse, error) {
-	fromAccAddr, _ := tools.GetAccAddress(privKey)
+	fromAccAddr, _ := client.GetAccAddress(privKey)
 	fromAddr := fromAccAddr.String()
 	zap.S().Info("NewRegion/fromAddr: ", fromAddr)
 	zap.S().Info("NewRegion/regionId: ", regionId)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"math/rand"
 	"strconv"
 	"time"
@@ -69,6 +70,15 @@ func (q *Query) ShowRegion(ctx context.Context, regionID string) (*stakepb.Query
 	return rpcRes, nil
 }
 
+func (q *Query) Regions(ctx context.Context) (*stakepb.QueryAllRegionResponse, error) {
+	req := &stakepb.QueryAllRegionRequest{}
+	rpcRes, err := q.Cli.StakeClient.RegionAll(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rpcRes, nil
+}
+
 func (q *Query) ShowValidator(ctx context.Context, operatorAddr string) (*stakepb.QueryValidatorResponse, error) {
 	req := &stakepb.QueryValidatorRequest{ValidatorAddr: operatorAddr}
 	rpcRes, err := q.Cli.StakeClient.Validator(ctx, req)
@@ -107,7 +117,7 @@ func GetChainNotExistNodeID() (string, error) {
 		validators = append(validators, v.Description.Moniker)
 	}
 
-	timeout := time.After(10 * time.Second)      // Set a timeout period of 10 seconds
+	timeout := time.After(60 * time.Second)      // Set a timeout period of 60 seconds
 	ticker := time.Tick(1000 * time.Millisecond) // It's triggered every 1000 milliseconds
 
 	for {
@@ -132,4 +142,16 @@ func IsStringInSlice(s string, slice []string) bool {
 		}
 	}
 	return false
+}
+
+func GetChainExistRegionID() (string, error) {
+	region, err := StakeQuery.Regions(StakeQuery.Ctx)
+	if err != nil {
+		zap.S().Errorf("GetChainExistRegionID error: %v", err)
+		return "", err
+	}
+	regionList := region.Region
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	regionInfo := regionList[r.Intn(len(regionList))]
+	return regionInfo.RegionId, nil
 }

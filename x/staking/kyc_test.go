@@ -2,14 +2,14 @@ package staking
 
 import (
 	"fmt"
+	"me-test/client"
 	"me-test/config"
 	_ "me-test/initialize"
-	"me-test/tools"
 	"testing"
 )
 
 func TestKeeper_NewKyc(t *testing.T) {
-	toAddr, _ := tools.GetAccAddress(tools.GenAccPrivKey())
+	toAddr, _ := client.GetAccAddress(client.GenAccPrivKey())
 
 	type args struct {
 		privKey  string

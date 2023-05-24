@@ -85,3 +85,29 @@ func TestQuery_Validators(t *testing.T) {
 		})
 	}
 }
+
+func TestQuery_KycList(t *testing.T) {
+
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"case3", args{StakeQuery.Ctx}, "", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := StakeQuery.KycList(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("KycList() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			fmt.Println("Kyc info: ", got.Kyc)
+			fmt.Println("Kyc length: ", len(got.Kyc))
+		})
+	}
+}

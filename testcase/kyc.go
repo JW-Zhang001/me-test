@@ -2,10 +2,11 @@ package testcase
 
 import (
 	"fmt"
-	"me-test/config"
-	"me-test/tools"
 
 	"go.uber.org/zap"
+
+	"me-test/client"
+	"me-test/config"
 )
 
 type KycArgs struct {
@@ -27,7 +28,7 @@ func TestNewKyc(regionID, userPrivKey string) error {
 
 	fromPrivKey := testdata.PrivKey
 
-	userAccAddr, err := tools.GetAccAddress(userPrivKey)
+	userAccAddr, err := client.GetAccAddress(userPrivKey)
 	if err != nil {
 		return err
 	}

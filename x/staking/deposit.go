@@ -6,14 +6,14 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
 )
 
 func (k *Keeper) Deposit(PriKey string, amount sdk.Coin, term stakepb.FixedDepositTerm) (*txpb.BroadcastTxResponse, error) {
 	zap.S().Info("Deposit/PriKey: ", PriKey)
 
-	userAccAddr, _ := tools.GetAccAddress(PriKey)
+	userAccAddr, _ := client.GetAccAddress(PriKey)
 	zap.S().Info("Deposit/Addr: ", userAccAddr.String())
 	zap.S().Info("Deposit/Amount: ", amount.String())
 	zap.S().Info("Deposit/Term: ", term.String())
@@ -33,7 +33,7 @@ func (k *Keeper) Deposit(PriKey string, amount sdk.Coin, term stakepb.FixedDepos
 func (k *Keeper) DepositWithdraw(PriKey string, DepositID uint64) (*txpb.BroadcastTxResponse, error) {
 	zap.S().Info("DepositWithdraw/PriKey: ", PriKey)
 
-	userAccAddr, _ := tools.GetAccAddress(PriKey)
+	userAccAddr, _ := client.GetAccAddress(PriKey)
 	zap.S().Info("DepositWithdraw/Addr: ", userAccAddr.String())
 	zap.S().Info("DepositWithdraw/DepositID: ", DepositID)
 

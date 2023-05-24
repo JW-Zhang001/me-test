@@ -6,14 +6,14 @@ import (
 	txpb "github.com/cosmos/cosmos-sdk/types/tx"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"go.uber.org/zap"
+	"me-test/client"
 	"me-test/config"
-	"me-test/tools"
 )
 
 func (k *Keeper) Delegate(delPriKey string, amount sdk.Coin) (*txpb.BroadcastTxResponse, error) {
 	zap.S().Info("Delegate/delPriKey: ", delPriKey)
 
-	delAccAddr, _ := tools.GetAccAddress(delPriKey)
+	delAccAddr, _ := client.GetAccAddress(delPriKey)
 	zap.S().Info("Delegate/delAddr: ", delAccAddr.String())
 	zap.S().Info("Delegate/amount: ", amount.String())
 
@@ -33,7 +33,7 @@ func (k *Keeper) Delegate(delPriKey string, amount sdk.Coin) (*txpb.BroadcastTxR
 func (k *Keeper) UnDelegate(delPriKey string, amount sdk.Coin, kyc bool) (*txpb.BroadcastTxResponse, error) {
 	zap.S().Info("Undelegate/delPriKey: ", delPriKey)
 
-	delAccAddr, _ := tools.GetAccAddress(delPriKey)
+	delAccAddr, _ := client.GetAccAddress(delPriKey)
 	zap.S().Info("Undelegate/delAccAddr: ", delAccAddr.String())
 	zap.S().Info("Undelegate/amount: ", amount.String())
 
