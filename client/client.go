@@ -18,6 +18,7 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authpb "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
+	dispb "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc"
 
@@ -35,6 +36,7 @@ type CmClient struct {
 	BankClient  bankpb.QueryClient
 	AuthClient  authpb.QueryClient
 	StakeClient stakepb.QueryClient
+	DisClient   dispb.QueryClient
 }
 
 func init() {
@@ -72,11 +74,12 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 	// create tx client
 	c.TxClient = txpb.NewServiceClient(c.Conn)
 
-	// create bank query client
+	// create query client
 	c.TmClient = tmservice.NewServiceClient(c.Conn)
 	c.BankClient = bankpb.NewQueryClient(c.Conn)
 	c.AuthClient = authpb.NewQueryClient(c.Conn)
 	c.StakeClient = stakepb.NewQueryClient(c.Conn)
+	c.DisClient = dispb.NewQueryClient(c.Conn)
 
 	return c, nil
 }

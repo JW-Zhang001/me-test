@@ -8,6 +8,40 @@ import (
 	"me-test/testsuite"
 )
 
+func main() {
+	//smokeTest := []func(){case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14}
+	//for _, f := range smokeTest {
+	//	f()
+	//}
+
+	case2()
+
+	fmt.Println("All use cases have executed")
+}
+
+func test() {
+	//ch := make(chan func(), len(caseList))
+	//// 将函数添加到通道中
+	//for _, c := range caseList {
+	//	ch <- c
+	//}
+	//
+	//goroutineNum := 10
+	//wg := sync.WaitGroup{}
+	//for i := 0; i < goroutineNum; i++ {
+	//	wg.Add(1)
+	//	go func() {
+	//		defer wg.Done()
+	//		for c := range ch {
+	//			c()
+	//		}
+	//	}()
+	//}
+	//
+	//close(ch)
+	//wg.Wait()
+}
+
 func case1() {
 	nodeID, err := query.GetChainNotExistNodeID()
 	if err != nil {
@@ -195,36 +229,4 @@ func case14() {
 		return
 	}
 	zap.S().Info("----------case14/PASS----------:", validatorID)
-}
-
-func main() {
-	//caseList := []func(){case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14}
-	//for _, f := range caseList {
-	//	f()
-	//}
-
-	fmt.Println("All use cases have executed")
-}
-
-func test() {
-	//ch := make(chan func(), len(caseList))
-	//// 将函数添加到通道中
-	//for _, c := range caseList {
-	//	ch <- c
-	//}
-	//
-	//goroutineNum := 10
-	//wg := sync.WaitGroup{}
-	//for i := 0; i < goroutineNum; i++ {
-	//	wg.Add(1)
-	//	go func() {
-	//		defer wg.Done()
-	//		for c := range ch {
-	//			c()
-	//		}
-	//	}()
-	//}
-	//
-	//close(ch)
-	//wg.Wait()
 }
