@@ -26,7 +26,7 @@ func NewStakeQuery() (*Query, context.CancelFunc) {
 }
 
 func (q *Query) Delegation(ctx context.Context, delAddr string) (*stakepb.QueryDelegationResponse, error) {
-	req := &stakepb.QueryDelegationRequest{DelegatorAddr: delAddr, ValidatorAddr: ""}
+	req := &stakepb.QueryDelegationRequest{DelegatorAddr: delAddr}
 	rpcRes, err := q.Cli.StakeClient.Delegation(ctx, req)
 	if err != nil {
 		return nil, err

@@ -23,7 +23,7 @@ func TestOneYearTotalBlocks() (uint64, bool) {
 
 func TestInitBlockReward() (uint64, bool) {
 	initBlockReward := math.Ceil(float64(InitYearReward) / float64(mintpb.OneYearTotalBlocks))
-	if initBlockReward != mintpb.InitialMintAmount+1 {
+	if initBlockReward != mintpb.InitialMintAmount {
 		zap.S().Infof("initBlockReward = %v, not eq mintpb.InitialMintAmount = %v: ", initBlockReward, mintpb.InitialMintAmount+1)
 		return uint64(initBlockReward), false
 	}
@@ -32,8 +32,7 @@ func TestInitBlockReward() (uint64, bool) {
 }
 
 func GetWhichYearBlockReward(year uint64) uint64 {
-	oneBlockReward, _ := TestInitBlockReward()
-	oneBlockReward = oneBlockReward / 1000000
+	oneBlockReward := mintpb.InitialMintAmount
 	if year == 1 {
 		return uint64(oneBlockReward)
 	} else {
@@ -44,7 +43,7 @@ func GetWhichYearBlockReward(year uint64) uint64 {
 func BlockRewardEqualZero() {
 	totalCoin := mintpb.TotalMintCoinsAmount
 	var yearReward int
-	for i := 1; i <= 15; i++ {
+	for i := 1; i <= 30; i++ {
 		blockReward := GetWhichYearBlockReward(uint64(i))
 		zap.S().Infof("year %v, block reward = %v", i, blockReward)
 		yearReward += int(blockReward * mintpb.OneYearTotalBlocks)

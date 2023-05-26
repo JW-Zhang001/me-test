@@ -9,12 +9,10 @@ import (
 )
 
 func main() {
-	//smokeTest := []func(){case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14}
-	//for _, f := range smokeTest {
-	//	f()
-	//}
-
-	case2()
+	smokeTest := []func(){case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14}
+	for _, f := range smokeTest {
+		f()
+	}
 
 	fmt.Println("All use cases have executed")
 }
