@@ -41,7 +41,7 @@ func TestExpireDepositWithdraw(regionID string) (map[string]string, bool) {
 	// 60s = Term1Months
 	time.Sleep(time.Second * 65)
 
-	FixedDeposit, err := query.StakeQuery.DepositByAcc(query.StakeQuery.Ctx, walletAcc["Addr"], stakepb.FixedDepositState_Expired)
+	FixedDeposit, err := query.StakeQuery.DepositByAcc(walletAcc["Addr"], stakepb.FixedDepositState_Expired)
 	if err != nil {
 		zap.S().Infof("Query DepositByAcc error %v", err)
 		return walletAcc, false
@@ -62,7 +62,7 @@ func TestNotExpireDepositWithdraw(regionID string) (map[string]string, bool) {
 		return walletAcc, false
 	}
 
-	FixedDeposit, err := query.StakeQuery.DepositByAcc(query.StakeQuery.Ctx, walletAcc["Addr"], stakepb.FixedDepositState_NotExpired)
+	FixedDeposit, err := query.StakeQuery.DepositByAcc(walletAcc["Addr"], stakepb.FixedDepositState_NotExpired)
 	if err != nil {
 		zap.S().Infof("Query DepositByAcc error %v", err)
 		return walletAcc, false

@@ -5,7 +5,26 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.uber.org/zap"
+
+	"me-test/x/bank"
+	"me-test/x/staking"
 )
+
+var (
+	StakeKeeper *staking.Keeper
+	BankKeeper  *bank.Keeper
+
+	extract = make(map[string]string, 256)
+)
+
+type Dependence struct {
+	Extract map[string]string
+}
+
+func init() {
+	StakeKeeper, _ = staking.NewKeeper()
+	BankKeeper, _ = bank.NewKeeper()
+}
 
 type DelegateArgs struct {
 	PrivKey string

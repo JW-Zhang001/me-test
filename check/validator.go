@@ -2,8 +2,11 @@ package check
 
 import (
 	"fmt"
+	"strconv"
+
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"go.uber.org/zap"
+
 	q "me-test/client/query"
 	"me-test/config"
 )
@@ -15,11 +18,11 @@ QueryStakeTokensPool
 @return err
 */
 func QueryStakeTokensPool() (balancesList []*bankpb.QueryBalanceResponse, err error) {
-	stakeTokensPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["stake_tokens_pool"])
+	stakeTokensPool, err := q.BankQuery.Balance(config.ModuleAccountList["stake_tokens_pool"])
 	if err != nil {
 		return nil, err
 	}
-	bondedStakeTokensPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["bonded_stake_tokens_pool"])
+	bondedStakeTokensPool, err := q.BankQuery.Balance(config.ModuleAccountList["bonded_stake_tokens_pool"])
 	if err != nil {
 		return nil, err
 	}
@@ -52,12 +55,18 @@ func CheckerNewValidator(fn func(nodeID, coinStr string) (string, error)) func(n
 		zap.S().Info(laterBalancesList)
 
 		actual1 := balancesList[0].Balance.Amount.Int64() - laterBalancesList[0].Balance.Amount.Int64()
-		if actual1 != int64(1000000000) {
-			return "Assert false", fmt.Errorf("assert false error = %v, wantErr %v", actual1, int64(1000000000))
+		stakeAmt, err := strconv.ParseInt(config.ValidatorStakeAmount[:len(config.ValidatorStakeAmount)-3], 10, 64)
+		if err != nil {
+			zap.S().Error("Conversion failed", err)
+			return "", err
+		}
+		uStakeAmt := stakeAmt * 1000000
+		if actual1 != uStakeAmt {
+			return "Assert false", fmt.Errorf("CheckerNewValidator assert false error = %v, wantErr %v", actual1, uStakeAmt)
 		}
 		actual2 := laterBalancesList[1].Balance.Amount.Int64() - balancesList[1].Balance.Amount.Int64()
-		if actual2 != int64(1000000000) {
-			return "Assert false", fmt.Errorf("assert false error = %v, wantErr %v", actual2, int64(1000000000))
+		if actual2 != uStakeAmt {
+			return "Assert false", fmt.Errorf("CheckerNewValidator assert false error = %v, wantErr %v", actual2, uStakeAmt)
 		}
 		return result, err
 	}

@@ -1,7 +1,7 @@
 # me-test
 
 ## Description
-This is the blockchain(CLI) automated testing framework
+This is the blockchain automated testing framework
 
 Note: Requires Go 1.20+
 

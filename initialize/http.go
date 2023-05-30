@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"me-test/config"
 )
 
 // HttpClient ApiUrl HTTP API Console
@@ -33,4 +35,13 @@ func NewRequest(method, url string, body io.Reader) (string, error) {
 	}
 
 	return string(respBody), nil
+}
+
+func getAccounts() {
+	accounts := config.OpenAPI["accounts"]
+	response, err2 := NewRequest(accounts.Method, accounts.Url, nil)
+	if err2 != nil {
+		return
+	}
+	fmt.Println("response: ", response)
 }

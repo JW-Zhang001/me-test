@@ -12,7 +12,7 @@ import (
 )
 
 func QueryTreasuryPool() (*bankpb.QueryBalanceResponse, error) {
-	treasuryPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["treasury_pool"])
+	treasuryPool, err := q.BankQuery.Balance(config.ModuleAccountList["treasury_pool"])
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func QueryTreasuryPool() (*bankpb.QueryBalanceResponse, error) {
 }
 
 func QueryProjectManage() (*bankpb.QueryBalanceResponse, error) {
-	PMBalance, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.BaseAccountList["PM"])
+	PMBalance, err := q.BankQuery.Balance(config.BaseAccountList["PM"])
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func CheckerKycFeesValidatorIsUser(fn func(privKey, toAddr string, amount int64)
 			return err
 		}
 		zap.S().Info("ownerAddr: ", ownerAddr)
-		ownerAddrBalance, _ := q.BankQuery.Balance(q.BankQuery.Ctx, ownerAddr)
+		ownerAddrBalance, _ := q.BankQuery.Balance(ownerAddr)
 		zap.S().Info("ownerAddrBalance: ", ownerAddrBalance)
 
 		if err := fn(privKey, toAddr, amount); err != nil {
@@ -163,7 +163,7 @@ func CheckerKycFeesValidatorIsUser(fn func(privKey, toAddr string, amount int64)
 			return err
 		}
 
-		laterOwnerAddrBalance, _ := q.BankQuery.Balance(q.BankQuery.Ctx, ownerAddr)
+		laterOwnerAddrBalance, _ := q.BankQuery.Balance(ownerAddr)
 		zap.S().Info("laterOwnerAddrBalance: ", laterOwnerAddrBalance)
 
 		actual2 := laterOwnerAddrBalance.Balance.Amount.Int64() - ownerAddrBalance.Balance.Amount.Int64()
@@ -196,17 +196,17 @@ func CheckerKycFeesValidatorIsUser(fn func(privKey, toAddr string, amount int64)
 }
 
 func GetValidatorOwner(kycUserAddr string) (string, error) {
-	kycInfo, err := q.StakeQuery.ShowKyc(q.StakeQuery.Ctx, kycUserAddr)
+	kycInfo, err := q.StakeQuery.ShowKyc(kycUserAddr)
 	if err != nil {
 		return "", err
 	}
 
-	regionInfo, err := q.StakeQuery.ShowRegion(q.StakeQuery.Ctx, kycInfo.Kyc.RegionId)
+	regionInfo, err := q.StakeQuery.ShowRegion(kycInfo.Kyc.RegionId)
 	if err != nil {
 		return "", err
 	}
 
-	validatorInfo, err := q.StakeQuery.ShowValidator(q.StakeQuery.Ctx, regionInfo.Region.OperatorAddress)
+	validatorInfo, err := q.StakeQuery.ShowValidator(regionInfo.Region.OperatorAddress)
 	if err != nil {
 		return "", err
 	}

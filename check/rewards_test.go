@@ -9,7 +9,7 @@ func TestCalculateUserReward(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
-		{"case1"},
+		{"TestCalculateUserReward"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -26,7 +26,7 @@ func TestCalculateTreasuryReward(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
-		{"case2"},
+		{"TestCalculateTreasuryReward"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

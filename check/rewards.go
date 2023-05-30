@@ -17,7 +17,7 @@ const (
 )
 
 func QueryBondedPool() (*bankpb.QueryBalanceResponse, error) {
-	bondedPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["bonded_tokens_pool"])
+	bondedPool, err := q.BankQuery.Balance(config.ModuleAccountList["bonded_tokens_pool"])
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func QueryBondedPool() (*bankpb.QueryBalanceResponse, error) {
 }
 
 func QueryNotBondedPool() (*bankpb.QueryBalanceResponse, error) {
-	notBondedPool, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["not_bonded_tokens_pool"])
+	notBondedPool, err := q.BankQuery.Balance(config.ModuleAccountList["not_bonded_tokens_pool"])
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func QueryNotBondedPool() (*bankpb.QueryBalanceResponse, error) {
 }
 
 func QueryDistribution() (*bankpb.QueryBalanceResponse, error) {
-	distribution, err := q.BankQuery.Balance(q.BankQuery.Ctx, config.ModuleAccountList["distribution"])
+	distribution, err := q.BankQuery.Balance(config.ModuleAccountList["distribution"])
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func CalculateTreasuryReward() (uint64, error) {
 	BlockReward, ok := testcase.TestInitBlockReward()
 	if !ok {
 		zap.S().Infof("Get TestInitBlockReward error")
-		return 0, fmt.Errorf("Get TestInitBlockReward error %v", ok)
+		return 0, fmt.Errorf("get TestInitBlockReward error %v", ok)
 	}
 	allUserReward, err := CalculateAllUserReward()
 	if err != nil {
@@ -62,7 +62,7 @@ func CalculateAllUserReward() (uint64, error) {
 	BlockReward, ok := testcase.TestInitBlockReward()
 	if !ok {
 		zap.S().Infof("Get TestInitBlockReward error")
-		return 0, fmt.Errorf("Get TestInitBlockReward error %v", ok)
+		return 0, fmt.Errorf("get TestInitBlockReward error %v", ok)
 	}
 
 	bondedPool, err := QueryBondedPool()
@@ -76,7 +76,7 @@ func CalculateAllUserReward() (uint64, error) {
 	allUserDelegateAmount := bondedPool.Balance.Amount.Uint64() + notBondedPool.Balance.Amount.Uint64()
 	zap.S().Infof("allUserDelegateAmount: %v", allUserDelegateAmount)
 
-	kycList, err := q.StakeQuery.KycList(q.StakeQuery.Ctx)
+	kycList, err := q.StakeQuery.KycList()
 	if err != nil {
 		zap.S().Infof("Get kycList error: %v", err)
 		return 0, err

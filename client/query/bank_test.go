@@ -1,16 +1,14 @@
 package query
 
 import (
-	"context"
-	"math/big"
-	"strings"
+	"math"
+	"me-test/config"
+	"reflect"
 	"testing"
 )
 
-func TestCmClient_Balance(t *testing.T) {
-
+func TestBankQueryClient_AllBalances(t *testing.T) {
 	type args struct {
-		ctx  context.Context
 		addr string
 	}
 	tests := []struct {
@@ -19,29 +17,26 @@ func TestCmClient_Balance(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"case1", args{BankQuery.Ctx, "cosmos1fap8hp3t3xt20qw4sczlyrk6n92uffj4r4kw77"}, "umec", false},
+		{"TestQueryAllBalances", args{addr: config.ModuleAccountList["treasury_pool"]}, "umec", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := BankQuery.Balance(tt.args.ctx, tt.args.addr)
+			q := &BankQueryClient{BankQuery.Cli, BankQuery.Ctx}
+			got, err := q.AllBalances(tt.args.addr)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Balance() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("AllBalances() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			gotStr := got.Balance.String()
-			if strings.Contains(gotStr, tt.want) {
-				t.Log(gotStr)
-			} else {
-				t.Errorf("Balance() not contains got = %v, want %v", got, tt.want)
+			denom := got.Balances[0].Denom
+			if denom != tt.want {
+				t.Errorf("AllBalances() got = %v, want %v", denom, tt.want)
 			}
 		})
 	}
 }
 
-func TestCmClient_AllBalances(t *testing.T) {
-
+func TestBankQueryClient_Balance(t *testing.T) {
 	type args struct {
-		ctx  context.Context
 		addr string
 	}
 	tests := []struct {
@@ -50,56 +45,54 @@ func TestCmClient_AllBalances(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"case1", args{BankQuery.Ctx, "cosmos1gmpxkchcdgfq995zye5efwzfw86zfa4vt4ke8g"}, "umec", false},
+		{"TestQueryBalance", args{addr: config.ModuleAccountList["treasury_pool"]}, "umec", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
-			got, err := BankQuery.AllBalances(tt.args.ctx, tt.args.addr)
+			q := &BankQueryClient{BankQuery.Cli, BankQuery.Ctx}
+			got, err := q.Balance(tt.args.addr)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("AllBalances() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Balance() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			gotStr := got.Balances.String()
-			if strings.Contains(gotStr, tt.want) {
-				t.Log(gotStr)
-			} else {
-				t.Errorf("Balance() not contains got = %v, want %v", got, tt.want)
+			if !reflect.DeepEqual(got.Balance.Denom, tt.want) {
+				t.Errorf("Balance() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 // total supply of all coins.
-func TestCmClient_TotalSupply(t *testing.T) {
-	a := big.NewInt(10000000000)
-	b := big.NewInt(0).Exp(big.NewInt(10), big.NewInt(6), nil)
-	stakeCoin := big.NewInt(0).Mul(a, b)
+func TestBankQueryClient_TotalSupply(t *testing.T) {
 
-	type args struct {
-		ctx context.Context
-	}
 	tests := []struct {
+		id      uint8
 		name    string
-		args    args
-		want    *big.Int
+		want    uint64
 		wantErr bool
 	}{
-		{name: "case1", args: args{BankQuery.Ctx}, want: stakeCoin, wantErr: false},
+		{1, "TestQueryTotalSupply", uint64(100 * math.Pow10(8) * math.Pow10(6)), false},
+		{2, "TestQueryTotalSupply", uint64(200 * math.Pow10(8) * math.Pow10(6)), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := BankQuery.TotalSupply(tt.args.ctx)
+			q := &BankQueryClient{BankQuery.Cli, BankQuery.Ctx}
+			got, err := q.TotalSupply()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TotalSupply() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			gotUint64 := got.Supply[0].Amount.Uint64()
-			wantUint64 := tt.want.Uint64()
-			if gotUint64 >= wantUint64 {
-				t.Logf("Total Supply: %v", gotUint64)
-			} else {
-				t.Errorf("Total Supply got = %v, want >= %v", gotUint64, wantUint64)
+			if tt.id == 1 {
+				if got.Supply[0].Amount.Uint64() <= tt.want {
+					t.Errorf("TotalSupply() got = %v, want %v", got, tt.want)
+					return
+				}
+			}
+			if tt.id == 2 {
+				if got.Supply[0].Amount.Uint64() > tt.want {
+					t.Errorf("TotalSupply() got = %v, want %v", got, tt.want)
+					return
+				}
 			}
 		})
 	}

@@ -63,13 +63,13 @@ type Wallet struct {
 	AccInfo AccountInfo
 }
 
-func NewWallet(ctx context.Context, c *CmClient) (Wallet, error) {
+func NewWallet(ctx context.Context, c *CmClient, id uint64) (Wallet, error) {
 	acc, err := GenWalletAcc()
 	if err != nil {
 		return Wallet{}, err
 	}
 	accInfo, _ := NewAccountInfo(ctx, c, acc["Addr"])
-	return Wallet{0, acc["PrivKey"], acc["Addr"], accInfo}, nil
+	return Wallet{id, acc["PrivKey"], acc["Addr"], accInfo}, nil
 }
 
 func ImportWallet(ctx context.Context, c *CmClient, privKey string, id uint64) (Wallet, error) {

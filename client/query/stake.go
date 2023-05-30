@@ -3,7 +3,6 @@ package query
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go.uber.org/zap"
 	"math/rand"
 	"strconv"
@@ -15,99 +14,104 @@ import (
 	"me-test/config"
 )
 
-func NewStakeQuery() (*Query, context.CancelFunc) {
+type StakeQueryClient struct {
+	Cli *client.CmClient
+	Ctx context.Context
+}
+
+func NewStakeQuery() (*StakeQueryClient, context.CancelFunc) {
 	var ctx, cancel = context.WithTimeout(context.Background(), config.Timeout)
 
 	var c, err = client.NewCmClient("")
 	if err != nil {
 		return nil, cancel
 	}
-	return &Query{Cli: c, Ctx: ctx}, cancel
+	return &StakeQueryClient{Cli: c, Ctx: ctx}, cancel
 }
 
-func (q *Query) Delegation(ctx context.Context, delAddr string) (*stakepb.QueryDelegationResponse, error) {
+func (q *StakeQueryClient) Delegation(delAddr string) (*stakepb.QueryDelegationResponse, error) {
 	req := &stakepb.QueryDelegationRequest{DelegatorAddr: delAddr}
-	rpcRes, err := q.Cli.StakeClient.Delegation(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Delegation(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) DepositByAcc(ctx context.Context, Addr string, queryType stakepb.FixedDepositState) (*stakepb.QueryFixedDepositByAcctResponse, error) {
+func (q *StakeQueryClient) DepositByAcc(Addr string, queryType stakepb.FixedDepositState) (*stakepb.QueryFixedDepositByAcctResponse, error) {
 	req := &stakepb.QueryFixedDepositByAcctRequest{Account: Addr, QueryType: queryType}
-	rpcRes, err := q.Cli.StakeClient.FixedDepositByAcct(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.FixedDepositByAcct(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) KycList(ctx context.Context) (*stakepb.QueryAllKycResponse, error) {
+func (q *StakeQueryClient) KycList() (*stakepb.QueryAllKycResponse, error) {
 	req := &stakepb.QueryAllKycRequest{}
-	rpcRes, err := q.Cli.StakeClient.KycAll(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.KycAll(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) ShowKyc(ctx context.Context, addr string) (*stakepb.QueryGetKycResponse, error) {
+func (q *StakeQueryClient) ShowKyc(addr string) (*stakepb.QueryGetKycResponse, error) {
 	req := &stakepb.QueryGetKycRequest{Account: addr}
-	rpcRes, err := q.Cli.StakeClient.Kyc(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Kyc(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) ShowRegion(ctx context.Context, regionID string) (*stakepb.QueryGetRegionResponse, error) {
+func (q *StakeQueryClient) ShowRegion(regionID string) (*stakepb.QueryGetRegionResponse, error) {
 	req := &stakepb.QueryGetRegionRequest{RegionId: regionID}
-	rpcRes, err := q.Cli.StakeClient.Region(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Region(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) Regions(ctx context.Context) (*stakepb.QueryAllRegionResponse, error) {
+func (q *StakeQueryClient) Regions() (*stakepb.QueryAllRegionResponse, error) {
 	req := &stakepb.QueryAllRegionRequest{}
-	rpcRes, err := q.Cli.StakeClient.RegionAll(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.RegionAll(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) ShowValidator(ctx context.Context, operatorAddr string) (*stakepb.QueryValidatorResponse, error) {
+func (q *StakeQueryClient) ShowValidator(operatorAddr string) (*stakepb.QueryValidatorResponse, error) {
 	req := &stakepb.QueryValidatorRequest{ValidatorAddr: operatorAddr}
-	rpcRes, err := q.Cli.StakeClient.Validator(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Validator(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func (q *Query) Validators(ctx context.Context) (*stakepb.QueryValidatorsResponse, error) {
+func (q *StakeQueryClient) Validators() (*stakepb.QueryValidatorsResponse, error) {
 	req := &stakepb.QueryValidatorsRequest{}
-	rpcRes, err := q.Cli.StakeClient.Validators(ctx, req)
+	rpcRes, err := q.Cli.StakeClient.Validators(StakeQuery.Ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rpcRes, nil
 }
 
-func RandNodeID() string {
+func RandNodeID(number int) string {
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
-	num := r.Intn(16) + 1
+	num := r.Intn(number) + 1
 	nodeID := "node" + strconv.Itoa(num)
 
 	return nodeID
 }
 
 func GetChainNotExistNodeID() (string, error) {
-	val, err := StakeQuery.Validators(StakeQuery.Ctx)
+	val, err := StakeQuery.Validators()
 	if err != nil {
 		return "", err
 	}
@@ -125,10 +129,10 @@ func GetChainNotExistNodeID() (string, error) {
 		case <-timeout:
 			return "", errors.New("timeout occurred")
 		case <-ticker:
-			nodeID := RandNodeID()
+			nodeID := RandNodeID(config.NodeNumber)
 			ok := IsStringInSlice(nodeID, validators)
 			if !ok {
-				fmt.Println("Chain not exist nodeID:", nodeID)
+				zap.S().Info("Chain not exist nodeID:", nodeID)
 				return nodeID, nil
 			}
 		}
@@ -145,7 +149,7 @@ func IsStringInSlice(s string, slice []string) bool {
 }
 
 func GetChainExistRegionID() (string, error) {
-	region, err := StakeQuery.Regions(StakeQuery.Ctx)
+	region, err := StakeQuery.Regions()
 	if err != nil {
 		zap.S().Errorf("GetChainExistRegionID error: %v", err)
 		return "", err

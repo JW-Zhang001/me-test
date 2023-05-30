@@ -3,47 +3,43 @@ package initialize
 import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
+	"me-test/config"
 	"regexp"
 )
 
 var (
-	client  *ssh.Client
-	session *ssh.Session
+	Client  *ssh.Client
+	Session *ssh.Session
 	err     error
 	home    = "cd /home/meuser/me-test/deploy && "
 )
 
 func init() {
-	config := &ssh.ClientConfig{
-		User: "meuser",
+	cfg := &ssh.ClientConfig{
+		User: config.SSHConfig["user"],
 		Auth: []ssh.AuthMethod{
-			ssh.Password("12345678"),
+			ssh.Password(config.SSHConfig["pwd"]),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	client, err = ssh.Dial("tcp", "192.168.0.207:22", config)
+	Client, err = ssh.Dial("tcp", config.SSHConfig["addr"], cfg)
 	if err != nil {
 		panic("Failed to dial: " + err.Error())
 	}
 }
 
 func executeCmd(cmd string) (string, error) {
-	session, err := client.NewSession()
+	Session, err = Client.NewSession()
 	if err != nil {
 		panic("Failed to create session: " + err.Error())
 	}
-
-	output, err := session.Output(cmd)
+	defer Session.Close()
+	output, err := Session.Output(cmd)
 	if err != nil {
 		panic("Failed to execute command: " + err.Error())
 	}
 	return string(output), nil
-}
-
-func Close() {
-	defer client.Close()
-	defer session.Close()
 }
 
 func GetValidatorPubKey(nodeID string) (string, error) {
