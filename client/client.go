@@ -2,10 +2,7 @@ package client
 
 import (
 	"context"
-	"go.uber.org/zap"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,6 +17,7 @@ import (
 	bankpb "github.com/cosmos/cosmos-sdk/x/bank/types"
 	dispb "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
 	"me-test/config"
@@ -108,7 +106,7 @@ func (c *CmClient) BuildTx(msg sdk.Msg, priv cryptopb.PrivKey, accSeq, accNum, f
 		return nil, err
 	}
 	fees := sdk.NewCoins(sdk.NewInt64Coin(sdk.BaseMEDenom, int64(fee)))
-	txBuilder.SetGasLimit(uint64(flags.DefaultGasLimit))
+	txBuilder.SetGasLimit(uint64(config.DefaultGasLimit))
 	txBuilder.SetFeeAmount(fees)
 
 	// First round: we gather all the signer infos. We use the "set empty signature" hack to do that.
@@ -148,12 +146,12 @@ func (c *CmClient) Encoder(tx authsign.Tx) ([]byte, error) {
 	return txBytes, nil
 }
 
-func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error) {
+func (c *CmClient) BroadcastTx(ctx context.Context, txBytes []byte) (*txpb.BroadcastTxResponse, error) {
 	grpcRes, err := c.TxClient.BroadcastTx(
-		context.Background(),
+		ctx,
 		&txpb.BroadcastTxRequest{
 			Mode:    txpb.BroadcastMode_BROADCAST_MODE_BLOCK,
-			TxBytes: txBytes, // Proto-binary of the signed transaction, see previous step.
+			TxBytes: txBytes,
 		},
 	)
 	if err != nil {
@@ -163,12 +161,12 @@ func (c *CmClient) BroadcastTx(txBytes []byte) (*txpb.BroadcastTxResponse, error
 	return grpcRes, nil
 }
 
-func (c *CmClient) BroadcastCheckTx(txBytes []byte) (*txpb.BroadcastTxResponse, error) {
+func (c *CmClient) BroadcastCheckTx(ctx context.Context, txBytes []byte) (*txpb.BroadcastTxResponse, error) {
 	grpcRes, err := c.TxClient.BroadcastTx(
-		context.Background(),
+		ctx,
 		&txpb.BroadcastTxRequest{
 			Mode:    txpb.BroadcastMode_BROADCAST_MODE_SYNC,
-			TxBytes: txBytes, // Proto-binary of the signed transaction, see previous step.
+			TxBytes: txBytes,
 		},
 	)
 	if err != nil {
@@ -206,7 +204,7 @@ func (c *CmClient) SendBroadcastTx(ctx context.Context, fromPrivKey string, msg 
 	if err != nil {
 		return nil, err
 	}
-	txRes, err := c.BroadcastTx(txBytes)
+	txRes, err := c.BroadcastTx(ctx, txBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +230,7 @@ func (c *CmClient) SendBroadcastCheckTx(ctx context.Context, fromPrivKey string,
 	if err != nil {
 		return nil, err
 	}
-	txRes, err := c.BroadcastCheckTx(txBytes)
+	txRes, err := c.BroadcastCheckTx(ctx, txBytes)
 	if err != nil {
 		return nil, err
 	}

@@ -32,7 +32,7 @@ func TestDeposit(privKey string, amount int64, term stakepb.FixedDepositTerm) er
 	}
 	if res.TxResponse.Code != 0 {
 		zap.S().Errorf("Deposit TxResponse error %v", res.TxResponse.RawLog)
-		return fmt.Errorf("Deposit TxResponse.Code error %v", res.TxResponse.Code)
+		return fmt.Errorf("deposit TxResponse.Code error %v", res.TxResponse.Code)
 	}
 	return nil
 }

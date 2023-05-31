@@ -36,7 +36,6 @@ func CheckerNotKycFees(fn func(privKey, toAddr string, amount int64) error) func
 			zap.S().Errorf("Before get balance error: %v", err)
 			return err
 		}
-		zap.S().Info("TreasuryPool before: ", treasuryPool)
 
 		if err := fn(privKey, toAddr, amount); err != nil {
 			zap.S().Errorf("fn error: %v", err)
@@ -48,7 +47,6 @@ func CheckerNotKycFees(fn func(privKey, toAddr string, amount int64) error) func
 			zap.S().Errorf("Later get balance error: %v", err)
 			return err
 		}
-		zap.S().Info("TreasuryPool Later: ", laterTreasuryPool)
 
 		treasuryReward, err := CalculateTreasuryReward()
 		if err != nil {

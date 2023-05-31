@@ -10,11 +10,10 @@ import (
 
 func main() {
 	smokeTest := []func(){case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14}
-	for _, f := range smokeTest {
+	for caseID, f := range smokeTest {
+		fmt.Printf("Running the test case:%d \n", caseID+1)
 		f()
 	}
-
-	fmt.Println("All use cases have executed")
 }
 
 func test() {

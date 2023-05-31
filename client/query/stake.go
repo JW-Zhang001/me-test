@@ -157,5 +157,6 @@ func GetChainExistRegionID() (string, error) {
 	regionList := region.Region
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	regionInfo := regionList[r.Intn(len(regionList))]
+	zap.S().Info("Chain exist regionID:", regionInfo.RegionId)
 	return regionInfo.RegionId, nil
 }

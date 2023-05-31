@@ -2,11 +2,20 @@ package query
 
 import (
 	"fmt"
-	"me-test/config"
 	"strings"
 	"testing"
 
 	stakepb "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	"me-test/config"
+)
+
+var (
+	DelegateAddr  = config.QueryStateTestData["DelegateAddr"]
+	DepositAddr   = config.QueryStateTestData["DepositAddr"]
+	KYCAddr       = config.QueryStateTestData["KYCAddr"]
+	RegionID      = config.QueryStateTestData["RegionID"]
+	ValidatorAddr = config.QueryStateTestData["ValidatorAddr"]
 )
 
 func TestGetChainExistRegionID(t *testing.T) {
@@ -96,7 +105,7 @@ func TestStakeQueryClient_Delegation(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestStakeQueryClient_Delegation", args{"cosmos1al2j5hws74fhee8pwz3p7wfy4p3sxkrwgvhwcy"}, "", false},
+		{"TestStakeQueryClient_Delegation", args{DelegateAddr}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,7 +131,7 @@ func TestStakeQueryClient_DepositByAcc(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestStakeQueryClient_DepositByAcc", args{"cosmos1al2j5hws74fhee8pwz3p7wfy4p3sxkrwgvhwcy", stakepb.FixedDepositState_AllState}, "", false},
+		{"TestStakeQueryClient_DepositByAcc", args{DepositAddr, stakepb.FixedDepositState_AllState}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -190,7 +199,7 @@ func TestStakeQueryClient_ShowKyc(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestStakeQueryClient_ShowKyc", args{"cosmos1al2j5hws74fhee8pwz3p7wfy4p3sxkrwgvhwcy"}, "", false},
+		{"TestStakeQueryClient_ShowKyc", args{KYCAddr}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -215,7 +224,7 @@ func TestStakeQueryClient_ShowRegion(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestStakeQueryClient_ShowRegion", args{"1"}, "", false},
+		{"TestStakeQueryClient_ShowRegion", args{RegionID}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -240,7 +249,7 @@ func TestStakeQueryClient_ShowValidator(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestStakeQueryClient_ShowValidator", args{"cosmosvaloper1se3jhtp4kkrclxqpd529m7ajmnxmdrrz902gh9"}, "", false},
+		{"TestStakeQueryClient_ShowValidator", args{ValidatorAddr}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

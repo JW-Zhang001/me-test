@@ -42,7 +42,7 @@ func (k *Keeper) TxToAdmin(privKey string, amount sdk.Coin) (*txpb.BroadcastTxRe
 	if msg.ValidateBasic() != nil {
 		return nil, err
 	}
-	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, 0)
+	res, err := k.Cli.SendBroadcastTx(k.Ctx, privKey, msg, config.DefaultFees)
 	if err != nil {
 		return nil, err
 	}

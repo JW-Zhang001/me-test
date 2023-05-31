@@ -20,8 +20,8 @@ func TestKeeper_NewRegion(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"TestKeeper_NewRegion", args{regionId: "2", name: "TCA",
-			validator: "cosmosvaloper14lw87q2aq0d5m0jmckuqx7gzrkztjecjjpfzff", privKey: config.SuperAdminPrivKey},
+		{"TestKeeper_NewRegion", args{regionId: "1", name: "TCA",
+			validator: "cosmosvaloper1q0hfp4364h4gxcantag3qgam3t04pldku67dm2", privKey: config.SuperAdminPrivKey},
 			"", false},
 	}
 	for _, tt := range tests {

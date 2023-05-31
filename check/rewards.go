@@ -69,11 +69,7 @@ func CalculateAllUserReward() (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	notBondedPool, err := QueryNotBondedPool()
-	if err != nil {
-		return 0, err
-	}
-	allUserDelegateAmount := bondedPool.Balance.Amount.Uint64() + notBondedPool.Balance.Amount.Uint64()
+	allUserDelegateAmount := bondedPool.Balance.Amount.Uint64()
 	zap.S().Infof("allUserDelegateAmount: %v", allUserDelegateAmount)
 
 	kycList, err := q.StakeQuery.KycList()

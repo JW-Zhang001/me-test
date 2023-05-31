@@ -11,7 +11,6 @@ var (
 	Client  *ssh.Client
 	Session *ssh.Session
 	err     error
-	home    = "cd /home/meuser/me-test/deploy && "
 )
 
 func init() {
@@ -43,7 +42,7 @@ func executeCmd(cmd string) (string, error) {
 }
 
 func GetValidatorPubKey(nodeID string) (string, error) {
-	showValidator := home + "./me-chaind tendermint show-validator --home=" + nodeID
+	showValidator := config.SSHConfig["home"] + "./me-chaind tendermint show-validator --home=" + nodeID
 
 	res, err := executeCmd(showValidator)
 	if err != nil {
