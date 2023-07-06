@@ -1,9 +1,9 @@
 pipeline {
   agent any
+  environment {
+    COSMOS_SDK_PATH = "${WORKSPACE}/../cosmos-sdk-0.46.0"
+  }
   stages {
-    environment {
-        COSMOS_SDK_PATH = "${WORKSPACE}/../cosmos-sdk-0.46.0"
-    }
 
     stage('Copy Code to Cosmos SDK Directory') {
       steps {
