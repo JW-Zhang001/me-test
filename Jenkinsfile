@@ -22,7 +22,12 @@ pipeline {
                 url: 'git@github.com:stchain2022/cosmos-sdk-0.46.0.git',
                 credentialsId: '2432580e-3beb-42f7-ab8a-9859617d43f1'
                 ]],
-              dir: "${WORKSPACE}/../cosmos-sdk-0.46.0"
+              // 将代码存放到指定的文件夹中
+              changelogToBranch: false,
+              poll: false,
+              scmName: '',
+              wip: false,
+              path: '../cosmos-sdk-0.46.0'
           ])
       }
     }
