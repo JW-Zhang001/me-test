@@ -19,7 +19,15 @@ pipeline {
           ])
       }
     }
-
+    
+    stage('Copy Code to Cosmos SDK Directory') {
+      steps {
+          // 使用 sh 步骤创建 cosmos-sdk-0.46.0 文件夹并将代码复制到指定的文件夹中
+          sh "sudo mkdir -p ${WORKSPACE}/cosmos-sdk-0.46.0"
+          sh "sudo cp -r . ${WORKSPACE}/cosmos-sdk-0.46.0"
+      }
+    }
+    
     // stage('Build me-chain') {
     //   steps {
     //     sh 'cd me-chain && make clean && make build'
