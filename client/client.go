@@ -79,6 +79,12 @@ func NewCmClient(grpcAddr string) (*CmClient, error) {
 	c.StakeClient = stakepb.NewQueryClient(c.Conn)
 	c.DisClient = dispb.NewQueryClient(c.Conn)
 
+	// NewBroadcastAPIClient
+	// testpb "github.com/tendermint/tendermint/proto/tendermint/rpc/grpc"
+
+	//tmintClient := testpb.NewBroadcastAPIClient(c.Conn)
+	//tmintClient.BroadcastTx()
+
 	return c, nil
 }
 
