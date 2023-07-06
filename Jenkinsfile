@@ -2,6 +2,13 @@ pipeline {
   agent any
   stages {
 
+    stage('Copy Code to Cosmos SDK Directory') {
+      steps {
+          // 使用 sh 步骤创建 cosmos-sdk-0.46.0 文件夹并将代码复制到指定的文件夹中
+          sh "mkdir -p ${WORKSPACE}/../cosmos-sdk-0.46.0"
+      }
+    }
+
     stage('Checkout Cosmos SDK') {
       steps {
           // 使用 checkout 步骤拉取第一个项目并检出指定的分支或提交记录
@@ -15,18 +22,11 @@ pipeline {
                 url: 'git@github.com:stchain2022/cosmos-sdk-0.46.0.git',
                 credentialsId: '2432580e-3beb-42f7-ab8a-9859617d43f1'
                 ]],
-              dir: "${WORKSPACE}/cosmos-sdk-0.46.0"
+              dir: "${WORKSPACE}/../cosmos-sdk-0.46.0"
           ])
       }
     }
     
-    stage('Copy Code to Cosmos SDK Directory') {
-      steps {
-          // 使用 sh 步骤创建 cosmos-sdk-0.46.0 文件夹并将代码复制到指定的文件夹中
-          sh "mkdir -p ${WORKSPACE}/cosmos-sdk-0.46.0"
-          sh "cp -r . ${WORKSPACE}/cosmos-sdk-0.46.0"
-      }
-    }
     
     // stage('Build me-chain') {
     //   steps {
