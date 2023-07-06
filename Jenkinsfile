@@ -24,8 +24,8 @@ pipeline {
                 url: 'git@github.com:stchain2022/cosmos-sdk-0.46.0.git',
                 credentialsId: '2432580e-3beb-42f7-ab8a-9859617d43f1'
                 ]],
+              dir: "../cosmos-sdk-0.46.0"
           ])
-          sh "mv . ${COSMOS_SDK_PATH}"
       }
     }
 
